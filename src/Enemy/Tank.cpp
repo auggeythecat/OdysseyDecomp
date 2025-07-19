@@ -1,5 +1,6 @@
 #include "Enemy/Tank.h"
 
+<<<<<<< Updated upstream
 #include "Library/LiveActor/LiveActor.h"
 #include "Library/Nerve/NerveSetupUtil.h"
 #include "Library/Nerve/NerveUtil.h"
@@ -122,3 +123,18 @@ void Tank::exePressReaction() {}
 void Tank::exeDemoWait() {}
 
 s32 countAliveBullets() {}
+=======
+#include "Library/LiveActor/ActorInitInfo.h"
+#include "Library/LiveActor/LiveActor.h"
+
+namespace al {
+struct ActorInitInfo;
+
+}
+
+Tank::Tank(const char* name) : al::LiveActor(name) {}
+
+void Tank::init(const al::ActorInitInfo& initInfo) {
+    //    using TankFunctor = al::FunctorV0M<Tank*, void (Tank::*)()>;
+}
+>>>>>>> Stashed changes

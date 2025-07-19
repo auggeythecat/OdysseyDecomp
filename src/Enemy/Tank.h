@@ -1,18 +1,26 @@
 #pragma once
 
+<<<<<<< Updated upstream
 #include <basis/seadTypes.h>
 
+=======
+>>>>>>> Stashed changes
 #include "Library/LiveActor/LiveActor.h"
 
 namespace al {
 struct ActorInitInfo;
+<<<<<<< Updated upstream
 class HitSensor;
 class SensorMsg;
+=======
+
+>>>>>>> Stashed changes
 }  // namespace al
 
 class Tank : public al::LiveActor {
 public:
     Tank(const char* name);
+<<<<<<< Updated upstream
     void init(const al::ActorInitInfo& initinfo) override;
 
     void enableShoot();
@@ -65,6 +73,10 @@ public:
     void exeDemoWait();
 
     s32 countAliveBullets();
+=======
+
+    void init(const al::ActorInitInfo& initInfo);
+>>>>>>> Stashed changes
 
 private:
 };

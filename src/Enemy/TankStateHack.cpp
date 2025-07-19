@@ -4,6 +4,8 @@
 #include <math/seadQuat.h>
 #include <math/seadVector.h>
 
+#include "Library/Camera/CameraArrowCollider.h"
+#include "Library/Camera/CameraPoserFunction.h"
 #include "Library/LiveActor/ActorActionFunction.h"
 #include "Library/LiveActor/ActorAnimFunction.h"
 #include "Library/LiveActor/ActorClippingFunction.h"
@@ -43,13 +45,11 @@ struct {
 TankStateHack::TankStateHack(al::LiveActor* parent, const al::ActorInitInfo* initinfo, f32 float1,
                              f32 float2, sead::Vector3f* vec3, sead::Quatf* quat, f32 float3)
     : al::ActorStateBase::ActorStateBase("キャプチャステート", parent) {
-    mTMPQuatName = *quat;  // TEMPERARY
-    mParamFive = float1;   // FIXME: This is a temporary name, it is wrong.
-    mParamSix = float2;    // FIXME: This is a temporary name, it is wrong.
-}
+    
+}   
 
 void TankStateHack::appear() {
-    return;
+    
 }
 
 void TankStateHack::kill() {}
