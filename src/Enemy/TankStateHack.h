@@ -8,7 +8,6 @@
 #include "Library/Nerve/NerveStateBase.h"
 #include "Library/Play/Camera/CameraPoserSubjective.h"
 #include "Player/CapTargetInfo.h"
-#include "basis/seadTypes.h"
 
 namespace al {
 struct ActorInitInfo;

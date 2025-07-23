@@ -40899,11 +40899,11 @@ Enemy/Tank.o:
   - offset: 0x187e80
     size: 12
     label: _ZN4Tank11endDemoWaitEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187e8c
     size: 16
     label: _ZN4Tank20startShootByMofumofuEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187e9c
     size: 228
     label: _ZN4Tank23startBlowDownByMofumofuEPN2al9HitSensorE

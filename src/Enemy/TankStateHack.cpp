@@ -1,6 +1,6 @@
 #include "Enemy/TankStateHack.h"
 
-#include <basis/seadTypes.h>
+#include <basis/seadtypes.h>
 #include <math/seadQuat.h>
 #include <math/seadVector.h>
 
@@ -143,7 +143,7 @@ void TankStateHack::updateVelocity(bool calcmove) {}
 void TankStateHack::updateCamera() {}
 
 bool TankStateHack::tryChangeNerveIfTrigerShoot() {
-
+    return true; //tmp
 }
 
 void TankStateHack::forceEndIfHack() {}

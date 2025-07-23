@@ -1,8 +1,36 @@
 #include "Enemy/Tank.h"
+#include <cmath>
 
+#include "Enemy/EnemyStateDamageCap.h"
+#include "Enemy/EnemyStateReset.h"
+#include "Enemy/EnemyStateReviveInsideScreen.h"
+#include "Enemy/EnemyStateSwoon.h"
+#include "Library/Collision/KCollisionServer.h"
+#include "Library/Joint/JointControllerKeeper.h"
+#include "Library/Collision/PartsConnectorUtil.h"
+#include "Library/LiveActor/ActorAnimFunction.h"
+#include "Library/LiveActor/ActorAreaFunction.h"
+#include "Library/LiveActor/ActorClippingFunction.h"
+#include "Library/LiveActor/ActorFlagFunction.h"
+#include "Library/LiveActor/ActorModelFunction.h"
+#include "Library/LiveActor/ActorActionFunction.h"
+#include "Library/LiveActor/ActorCollisionFunction.h"
+#include "Library/LiveActor/ActorInitinfo.h"
+#include "Library/LiveActor/ActorInitUtil.h"
+#include "Library/LiveActor/ActorPoseUtil.h"
 #include "Library/LiveActor/LiveActor.h"
+#include "Library/LiveActor/LiveActorGroup.h"
+#include "Library/Movement/EnemyStateBlowDown.h"
 #include "Library/Nerve/NerveSetupUtil.h"
 #include "Library/Nerve/NerveUtil.h"
+#include "Library/Placement/PlacementFunction.h"
+#include "Library/Rail/RailUtil.h"
+
+#include "Enemy/TankStateHack.h"
+#include "Library/Stage/StageSwitchUtil.h"
+#include "System/GameDataFunction.h"
+#include "System/GameDataHolderAccessor.h"
+#include "math/seadVectorFwd.h"
 
 namespace {
 NERVE_IMPL(Tank, Wait)
@@ -27,15 +55,55 @@ NERVES_MAKE_STRUCT(Tank, Wait, Move, Hack, Reset, Swoon, BlowDown, ReviveInsideS
                    PressReaction, DemoWait)
 }  // namespace
 
+
+
 Tank::Tank(const char* name) : al::LiveActor(name) {}
 
-void Tank::enableShoot() {}
+void Tank::init(const al::ActorInitInfo& info) {
+    GameDataHolderAccessor* gamedata;
 
-void Tank::disableShoot() {}
+    al::initActorWithArchiveName(this, info, "Tank", nullptr) ;
+    al::initNerve(this, &NrvTank.Wait, 7);
+
+    IUseRail* rail = mIUseRail;
+    if (al::isExistRail(rail)){
+        al::setRailPosToStart(rail);
+        al::syncRailTrans(this);
+        al::setNerve(this, &NrvTank.Move);
+    }
+
+    GameDataHolderAccessor::GameDataHolderAccessor(gamedata, )
+
+
+
+}
+void Tank::enableShoot() {
+    mIsEnableShoot = true;
+}
+
+void Tank::disableShoot() {
+    
+}
 
 void Tank::initAfterPlacement() {}
 
-void Tank::appear() {}
+void Tank::appear() {
+    if ((al::isAlive(this)) && al::isNerve(this, &NrvTank.Reset)){
+        return;
+    }
+    al::onCollide(this);
+    al::startAction(this, "Wait");
+    al::LiveActor::appear();
+    if (al::isExistRail(mIUseRail)) {
+        sead::Vector3f railpos = {0.0, 0.0, 0.0};
+        al::calcNearestRailPos(&railpos, mIUseRail, al::getTrans(this));
+        sead::Vector3f gettrans = al::getTrans(this);;
+        if (sqrt((railpos.x - gettrans.x) * (railpos.x - gettrans.x))){
+
+        }
+    }
+
+}
 
 void Tank::isExistAndNearRail() {}
 
@@ -63,9 +131,13 @@ void Tank::preInitHandleByMofumofu() {}
 
 void Tank::appearAndDemoWait() {}
 
-void Tank::endDemoWait() {}
+void Tank::endDemoWait() {
+    al::setNerve(this, &NrvTank.Wait);
+}
 
-void Tank::startShootByMofumofu() {}
+void Tank::startShootByMofumofu() {
+    al::setNerve(this, &NrvTank.AttackSign);
+}
 
 void Tank::startBlowDownByMofumofu(al::HitSensor*) {}
 
