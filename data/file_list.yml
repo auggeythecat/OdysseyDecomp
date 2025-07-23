@@ -41271,7 +41271,7 @@ Enemy/TankStateHack.o:
   - offset: 0x18b664
     size: 192
     label: _ZN13TankStateHack12attackSensorEPN2al9HitSensorES2_
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b724
     size: 1944
     label: _ZN13TankStateHack12exeStartDemoEv
