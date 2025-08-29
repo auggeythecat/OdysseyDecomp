@@ -3,13 +3,21 @@
 #include <basis/seadTypes.h>
 
 #include "Library/LiveActor/LiveActor.h"
+#include "Library/Rail/IUseRail.h"
 
 namespace al {
 struct ActorInitInfo;
 
 class HitSensor;
+class LiveActor;
+class LiveActorGroup;
+class MtxConnector;
+class NerveStateBase;
 class SensorMsg;
 }  // namespace al
+
+class EnemyStateReset;
+
 
 class Tank : public al::LiveActor {
 public:
@@ -20,7 +28,7 @@ public:
     void disableShoot();
     void initAfterPlacement() override;
     void appear() override;
-    void isExistAndNearRail();
+    bool isExistAndNearRail();
     void kill() override;
     void control() override;
     void die();
@@ -68,4 +76,32 @@ public:
     s32 countAliveBullets();
 
 private:
+        
+        al::IUseRail* mIUseRail = nullptr; // 0x40
+
+        f32 mJointZRotate = 0.0;
+        f32 mJointXScale =  0.0;
+        f32 mJointXRotate = 0.0;
+        f32 mWheelRoateR = 0.0;
+        f32 mWheelRoateL = 0.0;
+        
+        f32 mQuat1x = 0.0;
+
+        al::LiveActorGroup* mActorGroup = nullptr;
+
+        sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};
+        EnemyStateReset* mEnemyStateReset = nullptr;
+        
+        bool mIsMoonCave = false;
+        al::MtxConnector* mMtxConnector = nullptr; // 0x148
+
+        al::NerveStateBase* mNerveStateBase = nullptr;
+
+
+
+        f32 mCannonRotator = 0;
+
+        bool mCanShoot = false; // 0x1ac
+
+ 
 };
