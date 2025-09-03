@@ -1,9 +1,12 @@
 #pragma once
 
-#include <basis/seadTypes.h>
+#include "basis/seadTypes.h"
 
+#include "Enemy/TankStateHack.h"
 #include "Library/LiveActor/LiveActor.h"
+#include "Library/Movement/EnemyStateBlowDown.h"
 #include "Library/Rail/IUseRail.h"
+#include "Library/Scene/IUseSceneObjHolder.h"
 
 namespace al {
 struct ActorInitInfo;
@@ -17,7 +20,6 @@ class SensorMsg;
 }  // namespace al
 
 class EnemyStateReset;
-
 
 class Tank : public al::LiveActor {
 public:
@@ -76,32 +78,32 @@ public:
     s32 countAliveBullets();
 
 private:
-        
-        al::IUseRail* mIUseRail = nullptr; // 0x40
+    al::IUseStageSwitch* mIUseStageSwitch = nullptr;  // 0x18
+    al::IUseSceneObjHolder* mIUseSceneObj = nullptr;  // 0x20
+    al::IUseRail* mIUseRail = nullptr;                // 0x40
 
-        f32 mJointZRotate = 0.0;
-        f32 mJointXScale =  0.0;
-        f32 mJointXRotate = 0.0;
-        f32 mWheelRoateR = 0.0;
-        f32 mWheelRoateL = 0.0;
-        
-        f32 mQuat1x = 0.0;
+    al::LiveActorGroup* mActorGroup = nullptr;  // 0x108
+    TankStateHack* mTankStateHack = nullptr;    // 0x110
 
-        al::LiveActorGroup* mActorGroup = nullptr;
+    sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};
+    EnemyStateReset* mEnemyStateReset = nullptr;
 
-        sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};
-        EnemyStateReset* mEnemyStateReset = nullptr;
-        
-        bool mIsMoonCave = false;
-        al::MtxConnector* mMtxConnector = nullptr; // 0x148
+    bool mIsMoonCave = false;
+    al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
+    al::MtxConnector* mMtxConnector = nullptr;              // 0x148
 
-        al::NerveStateBase* mNerveStateBase = nullptr;
+    f32 mJointZRotate = 0.0;  // 0x160
+    f32 mJointXScale = 0.0;   // 0x164
+    f32 mJointXRotate = 0.0;  // 0x168
 
+    f32 mWheelRoateR = 0.0;  // 0x178
+    f32 mWheelRoateL = 0.0;  // 0x17c
 
+    f32 mQuat1x = 0.0;
 
-        f32 mCannonRotator = 0;
+    al::NerveStateBase* mNerveStateBase = nullptr;
 
-        bool mCanShoot = false; // 0x1ac
+    f32 mCannonRotator = 0;  // 0x1a4
 
- 
+    bool mCanShoot = false;  // 0x1ac
 };

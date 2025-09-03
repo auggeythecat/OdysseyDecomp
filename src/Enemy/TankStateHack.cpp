@@ -44,20 +44,15 @@ struct {
 
 TankStateHack::TankStateHack(al::LiveActor* parent, const al::ActorInitInfo* initinfo, f32 float1,
                              f32 float2, sead::Vector3f* vec3, sead::Quatf* quat, f32 float3)
-    : al::ActorStateBase::ActorStateBase("キャプチャステート", parent) {
-    
-}   
+    : al::ActorStateBase::ActorStateBase("キャプチャステート", parent) {}
 
-void TankStateHack::appear() {
-    
-}
+void TankStateHack::appear() {}
 
 void TankStateHack::kill() {}
 
 void TankStateHack::control() {
-
     const char* HackCapState = nullptr;
-    
+
     if (!al::isNerve(this, &TankStateHackData.NrvTankStateHack.StartDemo) ||
         (mEnemyStateHackStart->isHackStart())) {
         if (rs::isHackCapSeparateFlying(mIUsePlayerHack))
@@ -83,7 +78,7 @@ void TankStateHack::receiveMsgNpcScareByEnemy(const al::SensorMsg* message) {
 
 bool TankStateHack::receiveMsgHackStart(const al::SensorMsg* message, al::HitSensor* self,
                                         al::HitSensor* other) {
-    bool ismsgstarthack = rs::isMsgStartHack(message);                                            
+    bool ismsgstarthack = rs::isMsgStartHack(message);
     if (ismsgstarthack) {
         al::invalidateClipping(mTankActor);
         mEnemyStateHackStart->tryStart(message, other, self);
@@ -94,28 +89,26 @@ bool TankStateHack::receiveMsgHackStart(const al::SensorMsg* message, al::HitSen
 
 bool TankStateHack::receiveMsg(const al::SensorMsg* message, al::HitSensor* self,
                                al::HitSensor* other) {
-    if (rs::isMsgEnableMapCheckPointWarp(message)) {
+    if (rs::isMsgEnableMapCheckPointWarp(message))
         return rs::isMsgEnableMapCheckPointWarpCollidedGround(message, mTankActor);
-    }
-    if ((rs::isMsgHackerDamageAndCancel(message)) && (mIUsePlayerHack != nullptr)) {
+    if ((rs::isMsgHackerDamageAndCancel(message)) && (mIUsePlayerHack != nullptr))
         return rs::requestDamage(mIUsePlayerHack);
-    }
     if (!rs::isMsgHackSyncDamageVisibility(message)) {
-        if ((!rs::isMsgPushToPlayer(message)) || (!rs::tryReceiveMsgPushToPlayerAndAddVelocityH(mTankActor, message, self, other, 3.0))) {
+        if ((!rs::isMsgPushToPlayer(message)) || (!rs::tryReceiveMsgPushToPlayerAndAddVelocityH(
+                                                     mTankActor, message, self, other, 3.0))) {
             return rs::receiveMsgRequestTransferHack(message, mIUsePlayerHack, self);
         }
-    } 
-    else if (mIUsePlayerHack != nullptr) {
+    } else if (mIUsePlayerHack != nullptr) {
         rs::syncDamageVisibility(mTankActor, mIUsePlayerHack);
     }
     return true;
 }
 
-
 bool TankStateHack::receiveMsgHackEnd(const al::SensorMsg* message, al::HitSensor* self,
                                       al::HitSensor* other) {
     bool isHackEnd;
-    if (((rs::isMsgCancelHack(message)) && (!rs::isMsgHackMarioDead(message)) && (!rs::isMsgHackMarioDemo(message)))) {
+    if (((rs::isMsgCancelHack(message)) && (!rs::isMsgHackMarioDead(message)) &&
+         (!rs::isMsgHackMarioDemo(message)))) {
         isHackEnd = false;
     } else {
         endHack();
@@ -143,7 +136,7 @@ void TankStateHack::updateVelocity(bool calcmove) {}
 void TankStateHack::updateCamera() {}
 
 bool TankStateHack::tryChangeNerveIfTrigerShoot() {
-    return true; //tmp
+    return true;  // tmp
 }
 
 void TankStateHack::forceEndIfHack() {}

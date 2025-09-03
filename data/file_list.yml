@@ -40843,11 +40843,11 @@ Enemy/Tank.o:
   - offset: 0x186e60
     size: 276
     label: _ZN4Tank6appearEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x186f74
     size: 188
     label: _ZN4Tank18isExistAndNearRailEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x187030
     size: 36
     label: _ZN4Tank4killEv
