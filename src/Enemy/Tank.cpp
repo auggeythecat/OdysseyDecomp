@@ -9,10 +9,13 @@
 #include "Library/Collision/KCollisionServer.h"
 #include "Library/Collision/PartsConnectorUtil.h"
 #include "Library/Collision/PartsMtxConnector.h"
+#include "Library/Item/ItemUtil.h"
 #include "Library/Joint/JointControllerKeeper.h"
 #include "Library/LiveActor/ActorActionFunction.h"
 #include "Library/LiveActor/ActorAnimFunction.h"
+#include "Library/LiveActor/ActorClippingFunction.h"
 #include "Library/LiveActor/ActorCollisionFunction.h"
+#include "Library/LiveActor/ActorFlagFunction.h"
 #include "Library/LiveActor/ActorInitUtil.h"
 #include "Library/LiveActor/ActorModelFunction.h"
 #include "Library/LiveActor/ActorMovementFunction.h"
@@ -237,13 +240,13 @@ bool Tank::isExistAndNearRail() {
     if (al::isExistRail(mIUseRail)) {
         israil = false;
     } else {
-        sead::Vector3f* nearestRail = nullptr;
-        al::calcNearestRailPos(nearestRail, mIUseRail, al::getTrans(this));
+        sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
+        al::calcNearestRailPos(&nearestRail, mIUseRail, al::getTrans(this));
         sead::Vector3f transpost = al::getTrans(this);
         
-        israil = sead::Mathf::sqrt((nearestRail->x - transpost.x) * (nearestRail->x - transpost.x) +
-                 (nearestRail->y - transpost.y) * (nearestRail->y - transpost.y) +
-                 (nearestRail->z - transpost.z) * (nearestRail->z - transpost.z)) <= 150.0;
+        israil = sead::Mathf::sqrt((nearestRail.x - transpost.x) * (nearestRail.x - transpost.x) +
+                 (nearestRail.y - transpost.y) * (nearestRail.y - transpost.y) +
+                 (nearestRail.z - transpost.z) * (nearestRail.z - transpost.z)) <= 150.0;
         return israil;
     }
     return false;
@@ -269,26 +272,36 @@ bool Tank::receiveMsg(const al::SensorMsg* message, al::HitSensor* self, al::Hit
 }
 
 bool Tank::isMyBullet() {
-        return false;
+    return false;
 }
 
 // TankBullet Tank::shootByPlayer() // I don't want to have to deal with TankBullet related errors
 
-void Tank::isSwoon() {}
+void Tank::isSwoon() {
+    al::isNerve(this, &NrvTank.Swoon);
+}
 
 void Tank::appearCtrl() {}
 
-void Tank::preInitHandleByMofumofu() {}
+void Tank::preInitHandleByMofumofu() {
+    mIsHandled = true;
+}
 
 void Tank::appearAndDemoWait() {}
 
-void Tank::endDemoWait() {}
+void Tank::endDemoWait() {
+    al::setNerve(this, &NrvTank.Wait);
+}
 
-void Tank::startShootByMofumofu() {}
+void Tank::startShootByMofumofu() {
+    al::setNerve(this, &NrvTank.AttackSign);
+}
 
 void Tank::startBlowDownByMofumofu(al::HitSensor*) {}
 
-void Tank::startRevive() {}
+void Tank::startRevive() {
+    mEnemyStateReviveInsideScreen->startRevive();
+}
 
 void Tank::startRevivePrepare() {}
 
@@ -304,8 +317,12 @@ bool Tank::isRevivePrepare() {
     return false;
 }
 
-bool Tank::isEnableStartAttack() {
+bool Tank::isEnableStartAttack() {  
+    if (!al::isNerve(this, &NrvTank.Wait)) {
         return false;
+    } else {
+        return !al::isClipped(this);
+        }
 }
 
 void Tank::turn() {}
@@ -331,7 +348,18 @@ void Tank::exeReset() {}
 
 void Tank::exeSwoon() {}
 
-void Tank::exeBlowDown() {}
+void Tank::exeBlowDown() {
+    if (al::isFirstStep(this)) {
+        al::onCollide(this);
+    }
+    if (al::updateNerveState(this)) {
+        al::appearItem(this);
+        al::setVelocityZero(this);
+        al::setVelocityZero(this);
+        al::startHitReaction(this,"死亡");
+        mJointXScale =0;
+    }
+}
 
 void Tank::exeReviveInsideScreenNoAutoRevive() {}
 
@@ -349,28 +377,29 @@ void Tank::exeShoot() {}
 
 void Tank::exeAttackHit() {
 
-    sead::Vector3f front;
+    sead::Vector3f front = {0.0, 0.0, 0.0};
 
     if (al::isFirstStep(this)) {
         al::startAction(this, "AttackHit");
     }
 
-    sead::Vector3f playerPos = rs::getPlayerPos(this);
-    al::turnToTarget(this, playerPos, 8.0);
+    // sead::Vector3f playerPos = rs::getPlayerPos(this);
+    al::turnToTarget(this, rs::getPlayerPos(this), 8.0);
     al::calcFrontDir(&front, this);
     f32 planeAngle = al::calcAngleOnPlaneDegree(mFrontDir, front, sead::Vector3f::ey);
     mJointXRotate = planeAngle;
     if (!al::isActionEnd(this)) { return; }
     if (al::isExistRail(mIUseRail)) {
-        sead::Vector3f* nearestRail = nullptr;
-        al::calcNearestRailPos(nearestRail, mIUseRail, al::getTrans(this));
+        sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
+        al::calcNearestRailPos(&nearestRail, mIUseRail, al::getTrans(this));
         sead::Vector3f transpost = al::getTrans(this);
         
         
-        if (sead::Mathf::sqrt((nearestRail->x - transpost.x) * (nearestRail->x - transpost.x) +
-                 (nearestRail->y - transpost.y) * (nearestRail->y - transpost.y) +
-                 (nearestRail->z - transpost.z) * (nearestRail->z - transpost.z)) <= 150) {
+        if (sead::Mathf::sqrt((nearestRail.x - transpost.x) * (nearestRail.x - transpost.x) +
+                 (nearestRail.y - transpost.y) * (nearestRail.y - transpost.y) +
+                 (nearestRail.z - transpost.z) * (nearestRail.z - transpost.z)) <= 150) {
         al::setNerve(this, &NrvTank.Move);
+        return;
         }
     }
     al::setNerve(this, &NrvTank.Wait);

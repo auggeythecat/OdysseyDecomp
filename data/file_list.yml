@@ -40911,7 +40911,7 @@ Enemy/Tank.o:
   - offset: 0x187f80
     size: 8
     label: _ZN4Tank11startReviveEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x187f88
     size: 16
     label: _ZN4Tank18startRevivePrepareEv
@@ -40999,7 +40999,7 @@ Enemy/Tank.o:
   - offset: 0x18936c
     size: 308
     label: _ZN4Tank12exeAttackHitEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x1894a0
     size: 408
     label: _ZN4Tank8exeSwoonEv

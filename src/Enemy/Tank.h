@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Enemy/EnemyStateReviveInsideScreen.h"
 #include "basis/seadTypes.h"
 
 #include "Enemy/TankStateHack.h"
@@ -82,12 +83,14 @@ public:
 private:
     al::IUseStageSwitch* mIUseStageSwitch = nullptr;  // 0x18
     al::IUseSceneObjHolder* mIUseSceneObj = nullptr;  // 0x20
+    void* spacefiller1 = nullptr;
     al::IUseRail* mIUseRail = nullptr;                // 0x40
 
     al::LiveActorGroup* mActorGroup = nullptr;  // 0x108
     TankStateHack* mTankStateHack = nullptr;    // 0x110
 
-    EnemyStateReset* mEnemyStateReset = nullptr;
+    EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen = nullptr; // 0x128
+    // EnemyStateReset* mEnemyStateReset = nullptr;
 
     bool mIsMoonCave = false;
     al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
@@ -102,6 +105,7 @@ private:
     f32 mWheelRoateR = 0.0;  // 0x178
     f32 mWheelRoateL = 0.0;  // 0x17c
 
+    bool mIsHandled = false; // 0x190
     sead::Quatf mQuat = {0.0, 0.0, 0.0, 0.0}; // 0x194
 
     al::NerveStateBase* mNerveStateBase = nullptr;
