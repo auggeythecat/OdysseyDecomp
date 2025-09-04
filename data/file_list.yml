@@ -40851,7 +40851,7 @@ Enemy/Tank.o:
   - offset: 0x187030
     size: 36
     label: _ZN4Tank4killEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187054
     size: 624
     label: _ZN4Tank7controlEv
@@ -41007,11 +41007,11 @@ Enemy/Tank.o:
   - offset: 0x189638
     size: 80
     label: _ZN4Tank7exeHackEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x189688
     size: 60
     label: _ZN4Tank11exeDemoWaitEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x1896c4
     size: 112
     label: _ZNK4Tank16countAliveBulletEv

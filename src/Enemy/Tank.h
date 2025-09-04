@@ -7,6 +7,8 @@
 #include "Library/Movement/EnemyStateBlowDown.h"
 #include "Library/Rail/IUseRail.h"
 #include "Library/Scene/IUseSceneObjHolder.h"
+#include "math/seadQuat.h"
+#include "math/seadVectorFwd.h"
 
 namespace al {
 struct ActorInitInfo;
@@ -85,7 +87,6 @@ private:
     al::LiveActorGroup* mActorGroup = nullptr;  // 0x108
     TankStateHack* mTankStateHack = nullptr;    // 0x110
 
-    sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};
     EnemyStateReset* mEnemyStateReset = nullptr;
 
     bool mIsMoonCave = false;
@@ -96,10 +97,12 @@ private:
     f32 mJointXScale = 0.0;   // 0x164
     f32 mJointXRotate = 0.0;  // 0x168
 
+    sead::Vector3f mFrontDir = {0.0, 0.0, 0.0}; // 0x16c
+
     f32 mWheelRoateR = 0.0;  // 0x178
     f32 mWheelRoateL = 0.0;  // 0x17c
 
-    f32 mQuat1x = 0.0;
+    sead::Quatf mQuat = {0.0, 0.0, 0.0, 0.0}; // 0x194
 
     al::NerveStateBase* mNerveStateBase = nullptr;
 
