@@ -13,6 +13,7 @@
 #include "Library/Joint/JointControllerKeeper.h"
 #include "Library/LiveActor/ActorActionFunction.h"
 #include "Library/LiveActor/ActorAnimFunction.h"
+#include "Library/LiveActor/ActorAreaFunction.h"
 #include "Library/LiveActor/ActorClippingFunction.h"
 #include "Library/LiveActor/ActorCollisionFunction.h"
 #include "Library/LiveActor/ActorFlagFunction.h"
@@ -23,6 +24,7 @@
 #include "Library/LiveActor/LiveActor.h"
 #include "Library/LiveActor/LiveActorGroup.h"
 #include "Library/Math/MathUtil.h"
+#include "Library/Nerve/Nerve.h"
 #include "Library/Rail/RailUtil.h"
 #include "Library/Movement/EnemyStateBlowDown.h"
 #include "Library/Nerve/NerveSetupUtil.h"
@@ -66,14 +68,14 @@ void Tank::init(const al::ActorInitInfo& info) {
     al::initNerve(this, &NrvTank.Wait, 7);
 
     //TODO: Figure out how to add a member varible that is IUseRail/how this works.
-/*
-  mIUseRail = (IUseRail *)(this + 0x40);
-  if (al::isExistRail(mIUseRail);) {
-    al::setRailPosToStart(mIUseRail);
-    al::syncRailTrans(this);
-    al::setNerve(this, &NrvTank.Move);
-  }
-*/
+
+    IUseRail* sIUseRail = mIUseRail;
+    if (al::isExistRail(sIUseRail)) {
+        al::setRailPosToStart(sIUseRail);
+        al::syncRailTrans(this);
+        al::setNerve(this, &NrvTank.Move);
+    }
+
     const char* currentStage = GameDataFunction::getCurrentStageName(GameDataHolderAccessor(this));
     if (al::isEqualString(currentStage,"MoonWorldCaptureParadeStage")) {
         mIsMoonCave = true;
@@ -227,18 +229,40 @@ void Tank::initAfterPlacement() {
         al::attachMtxConnectorToCollision(mMtxConnector, this, false);
     }
     al::startMtpAnim(this, "AppearStart");
-    // bool iswet = al::isInAreaObj(this, "WetArea");
-    // al::updateMaterialCodeWet(this, iswet);
+    bool iswet = al::isInAreaObj(this, "WetArea");
+    al::updateMaterialCodeWet(this, iswet);
 }
 
 void Tank::appear() {
-
+    if (al::isAlive(this) && al::isNerve(this, &NrvTank.Reset)) {
+        return;
+    }
+    al::onCollide(this);
+    al::startAction(this, "Wait");
+    al::LiveActor::appear();
+    if (al::isExistRail(mIUseRail)) {
+        sead::Vector3f nearestRail;
+        al::calcNearestRailPos(&nearestRail, mIUseRail, al::getTrans(this));
+        sead::Vector3f transpost = al::getTrans(this);
+        
+        if (sead::Mathf::sqrt((nearestRail.x - transpost.x) * (nearestRail.x - transpost.x) +
+                 (nearestRail.y - transpost.y) * (nearestRail.y - transpost.y) +
+                 (nearestRail.z - transpost.z) * (nearestRail.z - transpost.z)) <= 150.0) {
+                    al::Nerve* nerve = &NrvTank.Move;
+                    al::setNerve(this, nerve);
+                    return;
+                 }
+    }
+    al::Nerve* nerve = &NrvTank.Wait;
+    al::setNerve(this, nerve);
+    return;             
+    
 }
 
 bool Tank::isExistAndNearRail() {
     bool israil;
     if (al::isExistRail(mIUseRail)) {
-        israil = false;
+        return false;
     } else {
         sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
         al::calcNearestRailPos(&nearestRail, mIUseRail, al::getTrans(this));

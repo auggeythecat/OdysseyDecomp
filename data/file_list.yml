@@ -40829,17 +40829,17 @@ Enemy/Tank.o:
   - offset: 0x186df4
     size: 12
     label: _ZN4Tank11enableShootEv
-    status: NotDecompiled
+    status: Matching
     lazy: true
   - offset: 0x186e00
     size: 8
     label: _ZN4Tank12disableShootEv
-    status: NotDecompiled
+    status: Matching
     lazy: true
   - offset: 0x186e08
     size: 88
     label: _ZN4Tank18initAfterPlacementEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x186e60
     size: 276
     label: _ZN4Tank6appearEv
@@ -40911,7 +40911,7 @@ Enemy/Tank.o:
   - offset: 0x187f80
     size: 8
     label: _ZN4Tank11startReviveEv
-    status: Wip
+    status: NotDecompiled
   - offset: 0x187f88
     size: 16
     label: _ZN4Tank18startRevivePrepareEv

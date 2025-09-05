@@ -90,11 +90,11 @@ private:
     TankStateHack* mTankStateHack = nullptr;    // 0x110
 
     EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen = nullptr; // 0x128
-    // EnemyStateReset* mEnemyStateReset = nullptr;
+    EnemyStateReset* mEnemyStateReset = nullptr;
 
-    bool mIsMoonCave = false;
-    al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
     al::MtxConnector* mMtxConnector = nullptr;              // 0x148
+    al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
+    bool mIsMoonCave = false;
 
     f32 mJointZRotate = 0.0;  // 0x160
     f32 mJointXScale = 0.0;   // 0x164
@@ -110,7 +110,9 @@ private:
 
     al::NerveStateBase* mNerveStateBase = nullptr;
 
-    f32 mCannonRotator = 0;  // 0x1a4
-
+    f32 mCannonRotator = 0.0;  // 0x1a4
+    
+    bool filler1[8];
+    // void* filler[0x1];
     bool mCanShoot = false;  // 0x1ac
 };
