@@ -364,8 +364,6 @@ void Tank::exeHack() {
     al::calcFrontDir(&front, this);
     f32 planeAngle = al::calcAngleOnPlaneDegree(mFrontDir, front, sead::Vector3f::ey);
     mJointXRotate = planeAngle;
-    al::updateNerveState(this);
-    
 }
 
 void Tank::exeReset() {}

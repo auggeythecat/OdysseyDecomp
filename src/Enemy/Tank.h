@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Enemy/EnemyStateReviveInsideScreen.h"
-#include "basis/seadTypes.h"
+#include <basis/seadTypes.h>
 
 #include "Enemy/TankStateHack.h"
 #include "Library/LiveActor/LiveActor.h"
