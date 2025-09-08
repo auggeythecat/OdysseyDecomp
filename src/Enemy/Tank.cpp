@@ -63,6 +63,8 @@ static EnemyStateSwoonInitParam gEnemyStateSwoonInitParam = EnemyStateSwoonInitP
     "SwoonStart", "Swoon", "SwoonEnd", nullptr, "SwoonStartFall", "SwoonStartLand");
 
 
+Tank::Tank(char const* name) : al::LiveActor(name) {}
+
 void Tank::init(const al::ActorInitInfo& info) {
     al::initActorWithArchiveName(this, info, "Tank", nullptr);
     al::initNerve(this, &NrvTank.Wait, 7);

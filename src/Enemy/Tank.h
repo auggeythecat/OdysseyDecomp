@@ -4,6 +4,7 @@
 #include <basis/seadTypes.h>
 
 #include "Enemy/TankStateHack.h"
+#include "Library/Collision/CollisionDirector.h"
 #include "Library/LiveActor/LiveActor.h"
 #include "Library/Movement/EnemyStateBlowDown.h"
 #include "Library/Rail/IUseRail.h"
@@ -91,6 +92,10 @@ private:
 
     EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen = nullptr; // 0x128
     EnemyStateReset* mEnemyStateReset = nullptr;
+
+    
+    al::CollisionDirector* mCollisionDirector = nullptr; //0xb0
+
 
     al::MtxConnector* mMtxConnector = nullptr;              // 0x148
     al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
