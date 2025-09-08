@@ -41227,43 +41227,43 @@ Enemy/TankStateHack.o:
     label:
     - _ZN13TankStateHackC1EP4TankRKN2al13ActorInitInfoEPfS6_PN4sead7Vector3IfEEPNS7_4QuatIfEES6_
     - _ZN13TankStateHackC2EP4TankRKN2al13ActorInitInfoEPfS6_PN4sead7Vector3IfEEPNS7_4QuatIfEES6_
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b104
     size: 168
     label: _ZN13TankStateHack6appearEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b1ac
     size: 240
     label: _ZN13TankStateHack4killEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b29c
     size: 116
     label: _ZN13TankStateHack7controlEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b310
     size: 68
     label: _ZN13TankStateHack5resetEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b354
     size: 16
     label: _ZN13TankStateHack27receiveMsgInitCapTargetInfoEPKN2al9SensorMsgE
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18b364
     size: 16
     label: _ZN13TankStateHack25receiveMsgNpcScareByEnemyEPKN2al9SensorMsgE
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b374
     size: 124
     label: _ZN13TankStateHack19receiveMsgHackStartEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b3f0
     size: 224
     label: _ZN13TankStateHack10receiveMsgEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b4d0
     size: 88
     label: _ZN13TankStateHack17receiveMsgHackEndEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18b528
     size: 316
     label: _ZN13TankStateHack7endHackEv
