@@ -41283,7 +41283,7 @@ Enemy/TankStateHack.o:
   - offset: 0x18bfe4
     size: 184
     label: _ZN13TankStateHack7exeWaitEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18c09c
     size: 760
     label: _ZN13TankStateHack14updateVelocityEb

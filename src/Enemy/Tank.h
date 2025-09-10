@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Enemy/EnemyStateReviveInsideScreen.h"
 #include <basis/seadTypes.h>
-
+#include "Enemy/EnemyStateReviveInsideScreen.h"
+#include "Enemy/TankBullet.h"
 #include "Enemy/TankStateHack.h"
 #include "Library/Collision/CollisionDirector.h"
 #include "Library/LiveActor/LiveActor.h"
@@ -43,7 +43,7 @@ public:
     bool receiveMsg(const al::SensorMsg* message, al::HitSensor* other,
                     al::HitSensor* self) override;
     bool isMyBullet();
-    // TankBullet shootByPlayer(); //I don't want to have to deal with TankBullet related errors
+    TankBullet shootByPlayer(const sead::Vector3f* vector, f32 float1, u32 int1); //I don't want to have to deal with TankBullet related errors
     void isSwoon();
     void appearCtrl();
     void preInitHandleByMofumofu();
@@ -79,23 +79,21 @@ public:
     void exePressReaction();
     void exeDemoWait();
 
-    s32 countAliveBullets();
+    s32 countAliveBullet();
 
 private:
     al::IUseStageSwitch* mIUseStageSwitch = nullptr;  // 0x18
     al::IUseSceneObjHolder* mIUseSceneObj = nullptr;  // 0x20
     void* spacefiller1 = nullptr;
-    al::IUseRail* mIUseRail = nullptr;                // 0x40
+    al::IUseRail* mIUseRail = nullptr;  // 0x40
 
     al::LiveActorGroup* mActorGroup = nullptr;  // 0x108
     TankStateHack* mTankStateHack = nullptr;    // 0x110
 
-    EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen = nullptr; // 0x128
+    EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen = nullptr;  // 0x128
     EnemyStateReset* mEnemyStateReset = nullptr;
 
-    
-    al::CollisionDirector* mCollisionDirector = nullptr; //0xb0
-
+    al::CollisionDirector* mCollisionDirector = nullptr;  // 0xb0
 
     al::MtxConnector* mMtxConnector = nullptr;              // 0x148
     al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
@@ -105,18 +103,18 @@ private:
     f32 mJointXScale = 0.0;   // 0x164
     f32 mJointXRotate = 0.0;  // 0x168
 
-    sead::Vector3f mFrontDir = {0.0, 0.0, 0.0}; // 0x16c
+    sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};  // 0x16c
 
     f32 mWheelRoateR = 0.0;  // 0x178
     f32 mWheelRoateL = 0.0;  // 0x17c
 
-    bool mIsHandled = false; // 0x190
-    sead::Quatf mQuat = {0.0, 0.0, 0.0, 0.0}; // 0x194
+    bool mIsHandled = false;                   // 0x190
+    sead::Quatf mQuat = {0.0, 0.0, 0.0, 0.0};  // 0x194
 
     al::NerveStateBase* mNerveStateBase = nullptr;
 
     f32 mCannonRotator = 0.0;  // 0x1a4
-    
+
     bool filler1[8];
     // void* filler[0x1];
     bool mCanShoot = false;  // 0x1ac

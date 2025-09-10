@@ -15,16 +15,20 @@
 #include "Library/Camera/IUseCamera.h"
 #include "Library/Collision/CollisionDirector.h"
 #include "Library/Layout/LayoutInitInfo.h"
-#include "Library/LiveActor/ActorAnimFunction.h"
-#include "Library/LiveActor/ActorInitUtil.h"
-#include "Library/LiveActor/ActorModelFunction.h"
 #include "Library/LiveActor/ActorActionFunction.h"
+#include "Library/LiveActor/ActorAnimFunction.h"
 #include "Library/LiveActor/ActorClippingFunction.h"
 #include "Library/LiveActor/ActorCollisionFunction.h"
+#include "Library/LiveActor/ActorInitUtil.h"
+#include "Library/LiveActor/ActorModelFunction.h"
 #include "Library/LiveActor/ActorMovementFunction.h"
+#include "Library/LiveActor/ActorPoseUtil.h"
 #include "Library/LiveActor/ActorSensorUtil.h"
+#include "Library/LiveActor/LiveActor.h"
 #include "Library/Math/IntervalTrigger.h"
 // #include "Library/Math/MathUtil.h"
+#include "Library/Math/MathUtil.h"
+#include "Library/Nerve/Nerve.h"
 #include "Library/Nerve/NerveSetupUtil.h"
 // #include "Library/Thread/FunctorV0M.h"
 #include "Library/Se/Function/SeFunction.h"
@@ -35,9 +39,12 @@
 #include "Player/HackerJudge.h"
 #include "Player/IUsePlayerHack.h"
 #include "Util/Hack.h"
+#include "Util/JudgeUtil.h"
 #include "Util/SensorMsgFunction.h"
 #include "math/seadQuat.h"
+#include "math/seadQuatCalcCommon.h"
 #include "math/seadVectorFwd.h"
+#include "nn/gfx/gfx_ResShaderData-api.nvn.h"
 
 namespace {
 NERVE_IMPL(TankStateHack, Wait)
@@ -51,15 +58,14 @@ NERVE_IMPL(TankStateHack, Shoot)
 NERVES_MAKE_STRUCT(TankStateHack, Wait, StartDemo, Fall, Move, Land, ShootReload, Shoot)
 }  // namespace
 
-TankStateHack::TankStateHack(Tank* parent, al::ActorInitInfo const& initinfo, f32* float1,
+TankStateHack::TankStateHack(Tank* parent, const al::ActorInitInfo& initinfo, f32* float1,
                              f32* float2, sead::Vector3f* vec3, sead::Quatf* quat, f32* float3)
     : al::ActorStateBase::ActorStateBase("キャプチャステート", parent) {
-    
     mvec3 = vec3;
     mTankActor = parent;
     mfloat1 = float1;
     mfloat2 = float2;
-    mQuat = quat;
+    mPose = quat;
     mfloat3 = float3;
 
     al::NerveExecutor::initNerve(&NrvTankStateHack.Wait, 1);
@@ -72,16 +78,19 @@ TankStateHack::TankStateHack(Tank* parent, al::ActorInitInfo const& initinfo, f3
     mIntervalTrigger = intervalTrigger;
 
     al::IUseCamera* iUseCamera;
-    if (parent != nullptr) { iUseCamera = (al::IUseCamera *) parent; }
-    al::CameraTicket* cameraTicket = al::initProgramableCamera(iUseCamera, initinfo, nullptr, &mCamPosition, &mCamRotation,(nullptr));
+    if (parent != nullptr)
+        iUseCamera = (al::IUseCamera*)parent;
+    al::CameraTicket* cameraTicket = al::initProgramableCamera(
+        iUseCamera, initinfo, nullptr, &mCamPosition, &mCamRotation, (nullptr));
     mCameraTicket = cameraTicket;
 
     alCameraFunction::initPriorityCapture(cameraTicket);
-    alCameraPoserFunction::initGyroCameraCtrl((al::CameraPoser*) mCameraTicket);
-    alCameraPoserFunction::initSnapShotCameraCtrl((al::CameraPoser*) mCameraTicket);
-    alCameraPoserFunction::validateSnapShotCameraZoomFovy((al::CameraPoser*) mCameraTicket);
-    alCameraPoserFunction::validateSnapShotCameraRoll((al::CameraPoser*) mCameraTicket);   
-    al::CameraArrowCollider* cameraArrowCollider = new al::CameraArrowCollider((al::CollisionDirector*) parent);
+    alCameraPoserFunction::initGyroCameraCtrl((al::CameraPoser*)mCameraTicket);
+    alCameraPoserFunction::initSnapShotCameraCtrl((al::CameraPoser*)mCameraTicket);
+    alCameraPoserFunction::validateSnapShotCameraZoomFovy((al::CameraPoser*)mCameraTicket);
+    alCameraPoserFunction::validateSnapShotCameraRoll((al::CameraPoser*)mCameraTicket);
+    al::CameraArrowCollider* cameraArrowCollider =
+        new al::CameraArrowCollider((al::CollisionDirector*)parent);
     mCameraArrowCollider = cameraArrowCollider;
 
     mCapTargetInfo = rs::createCapTargetInfo(parent, nullptr);
@@ -90,9 +99,8 @@ TankStateHack::TankStateHack(Tank* parent, al::ActorInitInfo const& initinfo, f3
     mHackerJudgeFall = hackerJudgeFall;
 
     al::LayoutInitInfo layoutInfo = al::getLayoutInitInfo(initinfo);
-    AimingCursor* aimingCursor = new AimingCursor("タンク照準レイアウト", layoutInfo); 
+    AimingCursor* aimingCursor = new AimingCursor("タンク照準レイアウト", layoutInfo);
     mAimingCursor = aimingCursor;
-
 }
 
 void TankStateHack::appear() {
@@ -103,19 +111,16 @@ void TankStateHack::appear() {
     al::setCameraFovyDegree(mCameraTicket, 50.0);
     al::setNerve(this, &NrvTankStateHack.StartDemo);
     iUseAudioKeeper = nullptr;
-    if (mTankActor != nullptr) {
-        iUseAudioKeeper = (al::IUseAudioKeeper*) mTankActor;
-    }
-    al::setSeKeeperPlayNamePrefix(iUseAudioKeeper,"PHack");
+    if (mTankActor != nullptr)
+        iUseAudioKeeper = (al::IUseAudioKeeper*)mTankActor;
+    al::setSeKeeperPlayNamePrefix(iUseAudioKeeper, "PHack");
     iUseAudioKeeper = nullptr;
-    if (mTankActor != nullptr) {
-        iUseAudioKeeper = (al::IUseAudioKeeper*) mTankActor;
-    }
+    if (mTankActor != nullptr)
+        iUseAudioKeeper = (al::IUseAudioKeeper*)mTankActor;
     alSeFunction::startListenerPoser(iUseAudioKeeper, "カメラ位置", 30);
     iUseAudioKeeper = nullptr;
-    if (mTankActor != nullptr) {
-        iUseAudioKeeper = (al::IUseAudioKeeper*) mTankActor;
-    }
+    if (mTankActor != nullptr)
+        iUseAudioKeeper = (al::IUseAudioKeeper*)mTankActor;
     alSeFunction::startSituation(iUseAudioKeeper, "乗り物の中", -1);
 }
 
@@ -130,48 +135,43 @@ void TankStateHack::kill() {
     al::setNerve(this, &NrvTankStateHack.StartDemo);
     if (al::isActiveCamera(mCameraTicket)) {
         al::IUseCamera* iUseCamera = nullptr;
-        if (mTankActor != nullptr) {
-            iUseCamera = (al::IUseCamera*) mTankActor;
-        }
+        if (mTankActor != nullptr)
+            iUseCamera = (al::IUseCamera*)mTankActor;
         al::endCamera(iUseCamera, mCameraTicket, -1, false);
     }
 
     al::IUseAudioKeeper* iUseAudioKeeper;
     iUseAudioKeeper = nullptr;
-    if (mTankActor != nullptr) {
-        iUseAudioKeeper = (al::IUseAudioKeeper *) mTankActor;
-    }
-    alSeFunction::endListenerPoser(iUseAudioKeeper,"カメラ位置",0);
+    if (mTankActor != nullptr)
+        iUseAudioKeeper = (al::IUseAudioKeeper*)mTankActor;
+    alSeFunction::endListenerPoser(iUseAudioKeeper, "カメラ位置", 0);
     iUseAudioKeeper = nullptr;
-    if (mTankActor != nullptr) {
-        iUseAudioKeeper = (al::IUseAudioKeeper *) mTankActor;
-    }
-    alSeFunction::endSituation(iUseAudioKeeper,"乗り物の中",-1);
+    if (mTankActor != nullptr)
+        iUseAudioKeeper = (al::IUseAudioKeeper*)mTankActor;
+    alSeFunction::endSituation(iUseAudioKeeper, "乗り物の中", -1);
     iUseAudioKeeper = nullptr;
-    if (mTankActor != nullptr) {
-        iUseAudioKeeper = (al::IUseAudioKeeper *) mTankActor;
-    }
+    if (mTankActor != nullptr)
+        iUseAudioKeeper = (al::IUseAudioKeeper*)mTankActor;
     al::resetSeKeeperPlayNamePrefix(iUseAudioKeeper);
     // mIsDead = true;
 }
 
 void TankStateHack::control() {
     const char* hackcap;
-    if (al::isNerve(this, &NrvTankStateHack.StartDemo) || mHackStart->isHackStart()) {
+    if (al::isNerve(this, &NrvTankStateHack.StartDemo) || mHackStart->isHackStart())
         hackcap = rs::isHackCapSeparateFlying(mIUsePlayerHack) ? "HackOnCapOn" : "HackOnCapOff";
-    } else {
+    else
         hackcap = "HackOffCapOn";
-    }
     al::tryStartVisAnimIfNotPlaying(mTankActor, hackcap);
 }
 
 void TankStateHack::reset() {
-    mInt1 = 0; // 0x68
-    mInt2 = 0; // 0x70
-    mInt3 = 0; // 0x74
-    mInt4 = 0; // 0x7c
-    mbigfloat = 0; // 0x80
-    mInt5 = 0; // 0x88
+    mInt1 = 0;      // 0x68
+    mInt2 = 0;      // 0x70
+    mInt3 = 0;      // 0x74
+    mInt4 = 0;      // 0x7c
+    mFront_Maybe = {0.0, 0.0, 0.0};  // 0x80
+    mInt5 = 0;      // 0x88
 }
 
 void TankStateHack::receiveMsgInitCapTargetInfo(const al::SensorMsg* message) {
@@ -196,14 +196,13 @@ bool TankStateHack::receiveMsgHackStart(const al::SensorMsg* message, al::HitSen
 
 bool TankStateHack::receiveMsg(const al::SensorMsg* message, al::HitSensor* other,
                                al::HitSensor* self) {
-    if (rs::isMsgEnableMapCheckPointWarp(message)){
+    if (rs::isMsgEnableMapCheckPointWarp(message))
         return rs::isMsgEnableMapCheckPointWarpCollidedGround(message, mTankActor);
-    }
-    if (rs::isMsgHackerDamageAndCancel(message) && mIUsePlayerHack != nullptr) {
+    if (rs::isMsgHackerDamageAndCancel(message) && mIUsePlayerHack != nullptr)
         return rs::requestDamage(mIUsePlayerHack);
-    }
     if (!rs::isMsgHackSyncDamageVisibility(message)) {
-        if (!rs::isMsgPushToPlayer(message) || !rs::tryReceiveMsgPushToPlayerAndAddVelocity(mTankActor, message, self, other, 3.0)) {
+        if (!rs::isMsgPushToPlayer(message) ||
+            !rs::tryReceiveMsgPushToPlayerAndAddVelocity(mTankActor, message, self, other, 3.0)) {
             return rs::receiveMsgRequestTransferHack(message, mIUsePlayerHack, other);
         }
     } else if (mIUsePlayerHack != nullptr) {
@@ -216,7 +215,8 @@ bool TankStateHack::receiveMsg(const al::SensorMsg* message, al::HitSensor* othe
 bool TankStateHack::receiveMsgHackEnd(const al::SensorMsg* message, al::HitSensor* other,
                                       al::HitSensor* self) {
     bool isendhack;
-    if (!rs::isMsgCancelHack(message) && !rs::isMsgHackMarioDead(message) && !rs::isMsgHackMarioDemo(message)) {
+    if (!rs::isMsgCancelHack(message) && !rs::isMsgHackMarioDead(message) &&
+        !rs::isMsgHackMarioDemo(message)) {
         isendhack = false;
     } else {
         endHack();
@@ -226,27 +226,62 @@ bool TankStateHack::receiveMsgHackEnd(const al::SensorMsg* message, al::HitSenso
 }
 
 void TankStateHack::endHack() {
-    
-    // al::validateClipping(mTankActor);
-    // al::startVisAnim(mTankActor, "HackOff");
-    // sead::Vector3f tankTrans = al::getTrans(mTankActor);
-    
+
+    sead::Vector3f
+
+    al::validateClipping(mLiveActor);
+    al::startVisAnim(mLiveActor, "HackOff");
+    sead::Vector3f gotTrans = al::getTrans(mTankActor);
+    sead::Vector3f gottranscopy = gotTrans;
+
 }
 
 void TankStateHack::attackSensor(al::HitSensor* other, al::HitSensor* self) {
-      if ((!rs::sendMsgHackerNoReaction(mIUsePlayerHack, self, other)) && (!rs::sendMsgHackAttackMapObj(self, other))) {
+    if ((!rs::sendMsgHackerNoReaction(mIUsePlayerHack, self, other)) &&
+        (!rs::sendMsgHackAttackMapObj(self, other))) {
         al::startHitReactionHitEffect(mTankActor, "キックヒット", other, self);
-      }
+    }
 }
 
-void TankStateHack::updatePose() {}
+void TankStateHack::updatePose() {
+    sead::Quatf qStack1;
+    sead::Vector3f frontDir;
+    al::calcFrontDir(&frontDir, mTankActor);
+    if (al::isOnGround(mTankActor, 0)) {
+        if (al::isNerve(this, &NrvTankStateHack.Fall)) {
+            al::makeQuatUpFront(&qStack1, sead::Vector3f::ey, frontDir);
+            sead::QuatCalcCommon<float>::slerpTo(*mPose, *mPose, qStack1, 0.15);
+            misUnkown = false;
+        }
+    } else {
+        al::makeQuatUpFront(&qStack1, mFront_Maybe, frontDir);
+        sead::QuatCalcCommon<float>::slerpTo(*mPose, *mPose, qStack1, 0.15);
+        misUnkown = al::calcAngleDegree(mFront_Maybe, sead::Vector3f::ey);
+    }
+    if (!al::isNerve(this, &NrvTankStateHack.StartDemo)) {
+        // al::calcQuatUp(qStack1, mPose);
+        // TODO: How to convert Quat to Vector3
+    }
+}
 
 void TankStateHack::updateVelocity(bool calcmove) {}
 
 void TankStateHack::updateCamera() {}
 
 bool TankStateHack::tryChangeNerveIfTrigerShoot() {
-    return true;
+
+    bool triggerhack = rs::isTriggerHackAnyButton(mIUsePlayerHack);
+    if (triggerhack) {
+        alCameraPoserFunction::reduceGyroSencitivity((al::CameraPoser *) mCameraTicket);
+        sead::Vector3f Jointpos = {0.0, 0.0, 0.0};
+        al::calcJointPos(&Jointpos, mTankActor, "Shoot");
+        sead::Vector3f shootPos = mShootLimit - Jointpos;
+        al::normalize(&shootPos);
+        mTankActor->shootByPlayer(&shootPos, 75.0, 90);
+        al::setNerve(this, &NrvTankStateHack.ShootReload);
+    }
+
+    return triggerhack;
 }
 
 void TankStateHack::forceEndIfHack() {}
@@ -255,11 +290,70 @@ void TankStateHack::calcAimCursorLayoutPos() {}
 
 void TankStateHack::shoot() {}
 
-void TankStateHack::exeWait() {}
+void TankStateHack::exeWait() {
+    al::Nerve* nerve;
+    if (al::isFirstStep(this)) {
+        al::startAction(mTankActor, "Wait");
+        rs::resetJudge(mHackerJudgeFall);
+    }
+    updateVelocity(false);
+    updateCamera();
+    updatePose();
+    if (!tryChangeNerveIfTrigerShoot()) {
+        if (!rs::updateJudgeAndResult(mHackerJudgeFall)) {
+            if (rs::isHackerStopMove(mTankActor, mIUsePlayerHack, 6.0)) {
+                return;
+            }
+            nerve = &NrvTankStateHack.Move;
+        } else { 
+            nerve = &NrvTankStateHack.Fall;
+        }
+        al::setNerve(this, nerve);
+        return;
+    }
+    mBulletCount = 0;
+}
 
-void TankStateHack::exeMove() {}
+void TankStateHack::exeMove() {
+    al::Nerve* nerve;
+    if (al::isFirstStep(this)) {
+        al::startAction(mTankActor, "Move");
+        rs::resetJudge(mHackerJudgeFall);
+    }
+    updateVelocity(false);
+    updateCamera();
+    updatePose();
 
-void TankStateHack::exeShoot() {}
+    if (!tryChangeNerveIfTrigerShoot()) {
+        if (!rs::updateJudgeAndResult(mHackerJudgeFall)) {
+            if (!rs::isHackerStopMove(mTankActor, mIUsePlayerHack, 6.0)) {
+                return;
+            }
+            nerve = &NrvTankStateHack.Wait;
+        } else { 
+            nerve = &NrvTankStateHack.Fall;
+        }
+        al::setNerve(this, nerve);
+        return;
+    }
+    mBulletCount = 0;
+}
+
+void TankStateHack::exeShoot() {
+    if (al::isFirstStep(this)) {
+        al::startAction(mTankActor, "Shoot");
+        al::startHitReaction(mTankActor, "発射");
+        al::setVelocityZero(mTankActor);
+        ++mBulletCount;        
+    }
+    al::isGreaterEqualStep(this, 15);
+    updateVelocity(false);
+    updateCamera();
+    updatePose();
+    if (al::isGreaterEqualStep(this, 17) && (((mBulletCount < 3 || (mTankActor->countAliveBullet() < 2)) && tryChangeNerveIfTrigerShoot()))) {
+    return;
+  }
+}
 
 void TankStateHack::exeShootReload() {}
 
