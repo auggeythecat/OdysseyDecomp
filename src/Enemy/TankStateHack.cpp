@@ -44,7 +44,7 @@
 #include "math/seadQuat.h"
 #include "math/seadQuatCalcCommon.h"
 #include "math/seadVectorFwd.h"
-#include "nn/gfx/gfx_ResShaderData-api.nvn.h"
+#include "Library/LiveActor/ActorClippingFunction.h"
 
 namespace {
 NERVE_IMPL(TankStateHack, Wait)
@@ -226,9 +226,7 @@ bool TankStateHack::receiveMsgHackEnd(const al::SensorMsg* message, al::HitSenso
 }
 
 void TankStateHack::endHack() {
-
-    sead::Vector3f
-
+    
     al::validateClipping(mLiveActor);
     al::startVisAnim(mLiveActor, "HackOff");
     sead::Vector3f gotTrans = al::getTrans(mTankActor);
