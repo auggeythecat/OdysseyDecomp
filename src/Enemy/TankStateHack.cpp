@@ -105,7 +105,7 @@ TankStateHack::TankStateHack(Tank* parent, const al::ActorInitInfo& initinfo, f3
 
 void TankStateHack::appear() {
     al::IUseAudioKeeper* iUseAudioKeeper;
-    // mIsDead = false;
+    mIsDead = false;
     al::invalidateDitherAnim(mTankActor);
     mNotfloat5 = 0;
     al::setCameraFovyDegree(mCameraTicket, 50.0);
@@ -115,8 +115,8 @@ void TankStateHack::appear() {
         iUseAudioKeeper = (al::IUseAudioKeeper*)mTankActor;
     al::setSeKeeperPlayNamePrefix(iUseAudioKeeper, "PHack");
     iUseAudioKeeper = nullptr;
-    if (mTankActor != nullptr)
-        iUseAudioKeeper = (al::IUseAudioKeeper*)mTankActor;
+    if (mLiveActor != nullptr)
+        iUseAudioKeeper = (al::IUseAudioKeeper*)mLiveActor;
     alSeFunction::startListenerPoser(iUseAudioKeeper, "カメラ位置", 30);
     iUseAudioKeeper = nullptr;
     if (mTankActor != nullptr)
@@ -264,7 +264,9 @@ void TankStateHack::updatePose() {
 
 void TankStateHack::updateVelocity(bool calcmove) {}
 
-void TankStateHack::updateCamera() {}
+void TankStateHack::updateCamera() {
+    
+}
 
 bool TankStateHack::tryChangeNerveIfTrigerShoot() {
 
@@ -355,6 +357,33 @@ void TankStateHack::exeShoot() {
 
 void TankStateHack::exeShootReload() {}
 
-void TankStateHack::exeFall() {}
+void TankStateHack::exeFall() {
+    if (al::isFirstStep(this)) {
+        al::startAction(mLiveActor, "Wait");
+    }
+    updateVelocity(false);
+    updateCamera();
+    updatePose();
+    if(tryChangeNerveIfTrigerShoot()) {
+        mIsFalling = true;
+        mIsStanding = false;
+    } else {
+        if (al::isOnGround(mLiveActor, 0)) {
+            al::reboundVelocityFromCollision(mTankActor, 0.0, 0.0, 1.0);
+            al::setNerve(this, &NrvTankStateHack.Land);
+        }
+    }
+}
 
-void TankStateHack::exeLand() {}
+void TankStateHack::exeLand() {
+    if (al::isFirstStep(this)) {
+        mIsFalling = false;
+        al::startAction(mTankActor, "Land");
+    }
+    updateVelocity(false);
+    updateCamera();
+    updatePose();
+    if (al::isActionEnd(mTankActor)) {
+        al::setNerve(this, &NrvTankStateHack.Wait);
+    }
+}

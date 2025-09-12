@@ -66,25 +66,7 @@ public:
     void exeLand();
 
 private:
-    /*
-
-*(undefined ***)this = &PTR_getNerveKeeper_7101ca9d78;
-
-memset(this + 0x90,0,0x60);
-*(undefined4 *)(this + 0xf8) = 0;
-*(undefined8 *)(this + 0xf0) = 0;
-*(undefined4 *)(this + 0x104) = 0;
-this[0x114] = (TankStateHack)0x1;
-*(undefined8 *)(this + 0x108) = 0;
-*(undefined4 *)(this + 0x110) = 0;
-*(undefined4 *)(this + 0x118) = 0;
-*(undefined8 *)(this + 0x138) = 0;
-*(undefined8 *)(this + 0xfc) = 0;
-
-*(undefined4 *)(this + 0x140) = 0x3f800000;
-*(undefined4 *)(this + 0x148) = 0;
-*/
-    // bool mIsDead = false; // 0x10
+    bool mIsDead = false; // 0x10
     al::LiveActor* mLiveActor = nullptr; // 0x18
     Tank* mTankActor = nullptr;                               // 0x20
     AimingCursor* mAimingCursor = nullptr;                    // 0x28
@@ -99,29 +81,26 @@ this[0x114] = (TankStateHack)0x1;
     u32 mInt2 = 0;                                            // 0x70
     u64 mInt3 = 0;                                            // 0x74
     u32 mInt4 = 0;                                            // 0x7c
-    sead::Vector3f mFront_Maybe = {0.0, 0.0, 0.0};                                        // 0x80
+    sead::Vector3f mFront_Maybe = {0.0, 0.0, 0.0};     // 0x80
     u32 mInt5 = 0;                                            // 0x88
     al::CameraTicket* mCameraTicket = nullptr;                // 0x90
     al::CameraArrowCollider* mCameraArrowCollider = nullptr;  // 0x98
     sead::Vector3f mCamPosition = {0.0, 0.0, 0.0};            // 0xa0
     sead::Vector3f mCamRotation = {0.0, 0.0, 0.0};            // 0xb8
-
     sead::Vector3f mShootLimit = {0.0, 0.0, 0.0}; // 0xc4
 
 
 
     u32 mBulletCount = 0; // 0x108 Something with shooting/counting shot
 
-
+    bool mIsStanding = false; // 0x108 used in exeFall, name uncertain.
     sead::Vector3f mSomeVec = {57.5, -25.0, 0.8};  // 0x11c
     bool misUnkown = false; // 0x118
-    void* mUnknown3[0x154 / 8];
 
     sead::Quatf* mPose = nullptr;                     // 0x128
     f32* mfloat3 = nullptr;                           // 0x130
     al::IntervalTrigger* mIntervalTrigger = nullptr;  // 0x138
 
-    void* mUnknown4[0x16 / 8];
     f32 mfloat4 = 0.0;        // 0x140
     bool mIsFalling = false;  // 0x144
     u32 mNotfloat5 = 0;       // 0x148 (Used in appear, and kill UKNOWN NAME)
