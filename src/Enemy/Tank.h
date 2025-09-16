@@ -82,40 +82,64 @@ public:
     s32 countAliveBullet();
 
 private:
-    al::IUseStageSwitch* mIUseStageSwitch = nullptr;  // 0x18
-    al::IUseSceneObjHolder* mIUseSceneObj = nullptr;  // 0x20
-    void* spacefiller1 = nullptr;
-    al::IUseRail* mIUseRail = nullptr;  // 0x40
+    
 
-    al::LiveActorGroup* mActorGroup = nullptr;  // 0x108
-    TankStateHack* mTankStateHack = nullptr;    // 0x110
 
-    EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen = nullptr;  // 0x128
-    EnemyStateReset* mEnemyStateReset = nullptr;
 
-    al::CollisionDirector* mCollisionDirector = nullptr;  // 0xb0
 
-    al::MtxConnector* mMtxConnector = nullptr;              // 0x148
-    al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
-    bool mIsMoonCave = false;
 
-    f32 mJointZRotate = 0.0;  // 0x160
-    f32 mJointXScale = 0.0;   // 0x164
-    f32 mJointXRotate = 0.0;  // 0x168
 
-    sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};  // 0x16c
 
-    f32 mWheelRoateR = 0.0;  // 0x178
-    f32 mWheelRoateL = 0.0;  // 0x17c
 
-    bool mIsHandled = false;                   // 0x190
-    sead::Quatf mQuat = {0.0, 0.0, 0.0, 0.0};  // 0x194
 
-    al::NerveStateBase* mNerveStateBase = nullptr;
 
-    f32 mCannonRotator = 0.0;  // 0x1a4
 
-    bool filler1[8];
-    // void* filler[0x1];
-    bool mCanShoot = false;  // 0x1ac
+
+
+
+
+
+
+
+
+
+
+
+
+// al::IUseStageSwitch* mIUseStageSwitch = nullptr;  // 0x18
+//     al::IUseSceneObjHolder* mIUseSceneObj = nullptr;  // 0x20
+//     void* spacefiller1 = nullptr;
+//     al::IUseRail* mIUseRail = nullptr;  // 0x40
+
+//     al::LiveActorGroup* mActorGroup = nullptr;  // 0x108
+//     TankStateHack* mTankStateHack = nullptr;    // 0x110
+
+//     EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen = nullptr;  // 0x128
+//     EnemyStateReset* mEnemyStateReset = nullptr;
+
+//     al::CollisionDirector* mCollisionDirector = nullptr;  // 0xb0
+
+//     al::MtxConnector* mMtxConnector = nullptr;              // 0x148
+//     al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
+//     bool mIsMoonCave = false;
+
+//     f32 mJointZRotate = 0.0;  // 0x160
+//     f32 mJointXScale = 0.0;   // 0x164
+//     f32 mJointXRotate = 0.0;  // 0x168
+
+//     sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};  // 0x16c
+
+//     f32 mWheelRoateR = 0.0;  // 0x178
+//     f32 mWheelRoateL = 0.0;  // 0x17c
+
+//     bool mIsHandled = false;                   // 0x190
+//     sead::Quatf mQuat = {0.0, 0.0, 0.0, 0.0};  // 0x194
+
+//     al::NerveStateBase* mNerveStateBase = nullptr;
+
+//     f32 mCannonRotator = 0.0;  // 0x1a4
+
+//     bool filler1[8];
+//     // void* filler[0x1];
+//     bool mCanShoot = false;  // 0x1ac
 };

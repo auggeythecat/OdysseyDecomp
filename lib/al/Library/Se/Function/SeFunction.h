@@ -6,7 +6,6 @@
 #include "Library/Se/SeFunction.h"
 #include "Library/Se/SeKeeper.h"
 
-
 namespace al {
 class SeKeeper;
 class PlayerHolder;
@@ -19,23 +18,28 @@ class IUseCamera;
 // void tryStartSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&);
 // void holdSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&);
 // void tryHoldSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&);
-// void startSeWithParam(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, float, char const*);
-// void tryStartSeWithParam(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, float, char const*);
-// void holdSeWithParam(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, float, char const*);
-// void tryHoldSeWithParam(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, float, char const*);
-// void startSeWithMeInfo(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, al::MeInfo const*);
-// void holdSeWithMeInfo(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, al::MeInfo const*);
-// void startSeWithManualControl(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, al::SePlayParamList const*, char const*, sead::Vector3<float> const*);
-// void tryStartSeWithManualControl(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, al::SePlayParamList const*, char const*, sead::Vector3<float> const*);
-// void holdSeWithManualControl(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, al::SePlayParamList const*, char const*, sead::Vector3<float> const*);
-// void tryHoldSeWithManualControl(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, al::SePlayParamList const*, char const*, sead::Vector3<float> const*);
-// void stopSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, int, char const*);
-// void stopSeWithoutFreezed(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, int, char const*);
-// void tryStopSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, int, char const*);
-// void tryStopAllSeFromUser(al::IUseAudioKeeper const*, int, char const*);
-// void stopAllSeFromUser(al::IUseAudioKeeper const*, int, char const*);
-// void isPlayingAnySe(al::IUseAudioKeeper const*, char const*);
-// void checkIsPlayingSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, char const*);
+// void startSeWithParam(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, float, char
+// const*); void tryStartSeWithParam(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&,
+// float, char const*); void holdSeWithParam(al::IUseAudioKeeper const*, sead::SafeStringBase<char>
+// const&, float, char const*); void tryHoldSeWithParam(al::IUseAudioKeeper const*,
+// sead::SafeStringBase<char> const&, float, char const*); void
+// startSeWithMeInfo(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, al::MeInfo
+// const*); void holdSeWithMeInfo(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&,
+// al::MeInfo const*); void startSeWithManualControl(al::IUseAudioKeeper const*,
+// sead::SafeStringBase<char> const&, al::SePlayParamList const*, char const*, sead::Vector3<float>
+// const*); void tryStartSeWithManualControl(al::IUseAudioKeeper const*, sead::SafeStringBase<char>
+// const&, al::SePlayParamList const*, char const*, sead::Vector3<float> const*); void
+// holdSeWithManualControl(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&,
+// al::SePlayParamList const*, char const*, sead::Vector3<float> const*); void
+// tryHoldSeWithManualControl(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&,
+// al::SePlayParamList const*, char const*, sead::Vector3<float> const*); void
+// stopSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, int, char const*); void
+// stopSeWithoutFreezed(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, int, char
+// const*); void tryStopSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, int, char
+// const*); void tryStopAllSeFromUser(al::IUseAudioKeeper const*, int, char const*); void
+// stopAllSeFromUser(al::IUseAudioKeeper const*, int, char const*); void
+// isPlayingAnySe(al::IUseAudioKeeper const*, char const*); void
+// checkIsPlayingSe(al::IUseAudioKeeper const*, sead::SafeStringBase<char> const&, char const*);
 // void setLifeTimeForHoldCall(al::IUseAudioKeeper const*, char const*, int, char const*);
 // void setSeSourceVolume(al::IUseAudioKeeper const*, float);
 // void setSeKeeperPlayNamePrefix(al::IUseAudioKeeper const*, char const*);
@@ -44,27 +48,23 @@ class IUseCamera;
 // void forceActivateSeKeeper(al::IUseAudioKeeper*);
 // void validateSeKeeper(al::IUseAudioKeeper*);
 // void invalidateSeKeeper(al::IUseAudioKeeper*);
-// void setSeEmitterPoseMtxPtr(al::IUseAudioKeeper const*, sead::Matrix34<float> const*, char const*);
-// void setSeEmitterPosePosPtr(al::IUseAudioKeeper const*, sead::Vector3<float> const*, char const*);
-// void tryUpdateSeMaterialCode(al::IUseAudioKeeper*, char const*);
-// void updateSeMaterialWater(al::IUseAudioKeeper*, bool);
-// void updateSeMaterialWet(al::IUseAudioKeeper*, bool);
-// void updateSeMaterialBeyondWall(al::IUseAudioKeeper*, bool);
-// void updateSeMaterialPuddle(al::IUseAudioKeeper*, bool);
-// void resetSeMaterialName(al::IUseAudioKeeper const*);
-// void setSeModifier(al::IUseAudioKeeper const*, al::ISeModifier*);
-// void setSeUserSyncParamPtr(al::IUseAudioKeeper const*, float const*, char const*);
-// void setSeUserSyncParamPtrInt(al::IUseAudioKeeper const*, int const*, char const*);
-// void setSeOutputFromController(al::SePlayParamList*, int, bool);
-// void setSeOutputTvDrcRemoteAll(al::SePlayParamList*);
-// void SeAreaTriggeredPlayer::SeAreaTriggeredPlayer(al::AudioDirector const*, al::AreaObjDirector*, al::PlayerHolder const*);
-// void SeAreaTriggeredPlayer::reset();
-// void SeAreaTriggeredPlayer::update();
-// void SeAreaTriggeredPlayer::stopSe(al::SePlayArea*);
-// void SeAreaTriggeredPlayer::startSe(al::SePlayArea*);
-// void SeAreaTriggeredPlayer::getAudioKeeper();
+// void setSeEmitterPoseMtxPtr(al::IUseAudioKeeper const*, sead::Matrix34<float> const*, char
+// const*); void setSeEmitterPosePosPtr(al::IUseAudioKeeper const*, sead::Vector3<float> const*,
+// char const*); void tryUpdateSeMaterialCode(al::IUseAudioKeeper*, char const*); void
+// updateSeMaterialWater(al::IUseAudioKeeper*, bool); void updateSeMaterialWet(al::IUseAudioKeeper*,
+// bool); void updateSeMaterialBeyondWall(al::IUseAudioKeeper*, bool); void
+// updateSeMaterialPuddle(al::IUseAudioKeeper*, bool); void resetSeMaterialName(al::IUseAudioKeeper
+// const*); void setSeModifier(al::IUseAudioKeeper const*, al::ISeModifier*); void
+// setSeUserSyncParamPtr(al::IUseAudioKeeper const*, float const*, char const*); void
+// setSeUserSyncParamPtrInt(al::IUseAudioKeeper const*, int const*, char const*); void
+// setSeOutputFromController(al::SePlayParamList*, int, bool); void
+// setSeOutputTvDrcRemoteAll(al::SePlayParamList*); void
+// SeAreaTriggeredPlayer::SeAreaTriggeredPlayer(al::AudioDirector const*, al::AreaObjDirector*,
+// al::PlayerHolder const*); void SeAreaTriggeredPlayer::reset(); void
+// SeAreaTriggeredPlayer::update(); void SeAreaTriggeredPlayer::stopSe(al::SePlayArea*); void
+// SeAreaTriggeredPlayer::startSe(al::SePlayArea*); void SeAreaTriggeredPlayer::getAudioKeeper();
 // void SeAreaTriggeredPlayer::getAreaObjDirector();
-} // namespace al
+}  // namespace al
 
 namespace alSeFunction {
 
@@ -97,12 +97,13 @@ namespace alSeFunction {
 // void tryStopStageStartSe(al::IUseAudioKeeper const);
 // void tryStartDefaultAtmosphereSe(al::IUseAudioKeeper const);
 // void tryStopDefaultAtmosphereSe(al::IUseAudioKeeper const);
-// void loadSoundArchive(al::IAudioResourceLoader*, al::SeArchiveLoadingInfo const*, al::AudioInfoListWithParts<al::SeUserInfo> const*, bool);
-// void startSituationWithAutoEnd(al::AudioDirector*, char const*, int, int, int);
-// void startSituation(al::AudioDirector*, char const*, int);
-// void endSituation(al::AudioDirector*, char const*, int);
-void startSituation(al::IUseAudioKeeper const*, char const*, int);
-void endSituation(al::IUseAudioKeeper const*, char const*, int);
+// void loadSoundArchive(al::IAudioResourceLoader*, al::SeArchiveLoadingInfo const*,
+// al::AudioInfoListWithParts<al::SeUserInfo> const*, bool); void
+// startSituationWithAutoEnd(al::AudioDirector*, char const*, int, int, int); void
+// startSituation(al::AudioDirector*, char const*, int); void endSituation(al::AudioDirector*, char
+// const*, int);
+void startSituation(const al::IUseAudioKeeper*, const char*, int);
+void endSituation(const al::IUseAudioKeeper*, const char*, int);
 // void checkIsActiveSituation(al::IUseAudioKeeper const*, char const);
 // void setDirectorCameraWaterRate(al::IUseAudioKeeper const*, float);
 // void setSePlayProhibitList(al::IUseAudioKeeper const*, char const**, int);
@@ -112,23 +113,23 @@ void endSituation(al::IUseAudioKeeper const*, char const*, int);
 // void endListenerPoser(al::SeDirector*, char const*, int);
 // void startListenerPoser(al::AudioDirector*, char const*, int);
 // void endListenerPoser(al::AudioDirector*, char const*, int);
-void startListenerPoser(al::IUseAudioKeeper const*, char const*, int);
-void endListenerPoser(al::IUseAudioKeeper const*, char const*, int);
+void startListenerPoser(const al::IUseAudioKeeper*, const char*, int);
+void endListenerPoser(const al::IUseAudioKeeper*, const char*, int);
 // void updateSeParamListWithResInfo(al::SePlayParamList*, al::SeResourceInfo const*, bool);
-// void updateSeParamListWithMeInfos(al::SePlayParamList*, al::BgmChordInfo const*, float, al::MeInfoList const*, al::MeInfo const);
-// void conveySpeakerParamToHandle(al::SpeakerParam const*, al::AcLSoundHandle*, bool, float const*, int, bool);
-// void conveyParamListToHandle(al::SePlayParamList const*, float, float, al::AcLSoundHandle*, float*, bool);
-// void calcRollOff(al::SeRollOffCurveType, float, float, float, float, float, float);
-// void killSeFromEmitters(al::SeDirector*, al::SeEmitterHolder);
-// void startClippedSeFromEmitters(al::SeDirector*, al::SeEmitterHolder);
-// void endClippedSeFromEmitters(al::SeDirector*, al::SeEmitterHolder);
-// void stopAllFromEmitter(al::SeDirector*, al::SeEmitter*, unsigned int);
-// void isToCalcSpeakerParamStereo(al::SeResourceInfo const);
-// void calcDecibelToPriorityCoef(float, float, float);
-// void tryFindVoiceLabelFromChar(char16_t);
-// void tryFindVoiceLabelFromCharUsEu(char16_t, char16_t);
-// void tryFindVoiceLabelRandomFromChar(char16_t);
-// void startSeFromUpperLayerSeKeeper(al::IUseAudioKeeper const*, char const);
-// void startSeLoopSequence(al::IUseAudioKeeper const*, char const*, al::MeInfo const*, int);
+// void updateSeParamListWithMeInfos(al::SePlayParamList*, al::BgmChordInfo const*, float,
+// al::MeInfoList const*, al::MeInfo const); void conveySpeakerParamToHandle(al::SpeakerParam
+// const*, al::AcLSoundHandle*, bool, float const*, int, bool); void
+// conveyParamListToHandle(al::SePlayParamList const*, float, float, al::AcLSoundHandle*, float*,
+// bool); void calcRollOff(al::SeRollOffCurveType, float, float, float, float, float, float); void
+// killSeFromEmitters(al::SeDirector*, al::SeEmitterHolder); void
+// startClippedSeFromEmitters(al::SeDirector*, al::SeEmitterHolder); void
+// endClippedSeFromEmitters(al::SeDirector*, al::SeEmitterHolder); void
+// stopAllFromEmitter(al::SeDirector*, al::SeEmitter*, unsigned int); void
+// isToCalcSpeakerParamStereo(al::SeResourceInfo const); void calcDecibelToPriorityCoef(float,
+// float, float); void tryFindVoiceLabelFromChar(char16_t); void
+// tryFindVoiceLabelFromCharUsEu(char16_t, char16_t); void
+// tryFindVoiceLabelRandomFromChar(char16_t); void startSeFromUpperLayerSeKeeper(al::IUseAudioKeeper
+// const*, char const); void startSeLoopSequence(al::IUseAudioKeeper const*, char const*, al::MeInfo
+// const*, int);
 
-}
+}  // namespace alSeFunction
