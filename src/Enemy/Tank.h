@@ -100,14 +100,27 @@ private:
     EnemyStateSwoon* mEnemyStateSwoon = nullptr;
     al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;
     al::MtxConnector* mMtxConnector = nullptr;
+    float mPose2w = 0.0;
+    float mPose2x = 0.0;
+    float mPose2y = 0.0;
+    float mPose2z = 0.0;
 
-    float TSHfloat1 = 0.0;
-    float TSHfloat2 = 0.0;
 
-    sead::Vector3f TSHVector1 = {0.0, 0.0, 0.0};
+
+    float mCannonRotator = 0.0;
+    float mCannonScalor = 0.0;
+    float mHipRotator = 0.0;
+    sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};
+
+
+
+
+    float mRWheelRotator = 0.0;
+    float mLWheelRotator = 0.0;
 
     sead::Quatf Quat = {0.0, 0.0, 0.0, 0.0};
-    float TSHfloat3 = 0.0;
+    float mPosey = 0.0;
+    float mPosez = 0.0;
 
     bool mCanShoot = true;
 

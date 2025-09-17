@@ -87,7 +87,7 @@ void Tank::init(const al::ActorInitInfo& info) {
         mIsMoonCave = true;
     }
 
-    TankStateHack* tankStateHack = new TankStateHack(this, info, &TSHfloat1, &TSHfloat2, &TSHVector1, &Quat, &TSHfloat3);
+    TankStateHack* tankStateHack = new TankStateHack(this, info, &mCannonRotator, &mCannonScalor, &mFrontDir, &Quat, &TSHfloat3);
     mTankStateHack = tankStateHack;
     al::initNerveState(this, tankStateHack, &NrvTank.Hack, "キャプチャ");
 
@@ -137,7 +137,41 @@ void Tank::init(const al::ActorInitInfo& info) {
     if (isExistRail) {
         al::setRailPosToStart(mIUseRail);
     }
+
+    mMtxConnector = al::tryCreateMtxConnector(this, info);
     
+    al::initJointControllerKeeper(this, 15);
+    al::initJointLocalZRotator(this, &mCannonRotator, "Cannon1");
+    al::initJointLocalXRotator(this, &mHipRotator, "Hip");
+    al::initJointLocalScaleControllerX(this, &mCannonScalor, "Cannon2");
+    mCannonScalor = 1.0;
+    
+    sead::Vector3f frontDir;
+    al::calcFrontDir(&frontDir, this);
+    mFrontDir = frontDir;
+    mHipRotator = al::calcAngleOnPlaneDegree(mFrontDir, frontDir, sead::Vector3<float>::ey);
+
+    float rWheelRotator = mRWheelRotator;
+    al::initJointLocalXRotator(this, &rWheelRotator,"WheelR1");
+    al::initJointLocalXRotator(this, &rWheelRotator,"WheelR2");
+    al::initJointLocalXRotator(this, &rWheelRotator,"WheelR3");
+    al::initJointLocalXRotator(this, &rWheelRotator,"WheelR4");
+    al::initJointLocalXRotator(this, &rWheelRotator,"WheelR5");
+    float lWheelRotator = mLWheelRotator;
+    al::initJointLocalXRotator(this, &lWheelRotator,"WheelL1");
+    al::initJointLocalXRotator(this, &lWheelRotator,"WheelL2");
+    al::initJointLocalXRotator(this, &lWheelRotator,"WheelL3");
+    al::initJointLocalXRotator(this, &lWheelRotator,"WheelL4");
+    al::initJointLocalXRotator(this, &lWheelRotator,"WheelL5");
+
+
+    sead::Quatf pose = al::getQuat(this);
+
+    
+
+
+
+
 }
 
 void Tank::enableShoot() {
