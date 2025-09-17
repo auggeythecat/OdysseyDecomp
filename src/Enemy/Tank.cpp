@@ -61,8 +61,10 @@ NERVES_MAKE_STRUCT(Tank, Wait, Move, Hack, Reset, Swoon, BlowDown, ReviveInsideS
                    PressReaction, DemoWait)
 }  // namespace
 
-static EnemyStateSwoonInitParam gEnemyStateSwoonInitParam = EnemyStateSwoonInitParam(
-    "SwoonStart", "Swoon", "SwoonEnd", nullptr, "SwoonStartFall", "SwoonStartLand");
+static EnemyStateSwoonInitParam gEnemyStateSwoonInitParam = EnemyStateSwoonInitParam("SwoonStart", "Swoon", "SwoonEnd", nullptr, "SwoonStartFall", "SwoonStartLand");
+const al::EnemyStateBlowDownParam sEnemyCapBlowDownParam = al::EnemyStateBlowDownParam("BlowDown", 17.0f, 40.0f, 2.0f, 0.95f, 120, 1);
+const al::EnemyStateBlowDownParam sEnemyCapBlowDownParamParade = al::EnemyStateBlowDownParam("BlowDownCaptureParade", 17.0f, 40.0f, 2.0f, 0.95f, 120, 1);
+
 
 Tank::Tank(const char* name) : al::LiveActor(name) {}
 
@@ -78,13 +80,63 @@ void Tank::init(const al::ActorInitInfo& info) {
         al::syncRailTrans(this);
         al::setNerve(this, &NrvTank.Move);
     }
-    GameDataHolderAccessor* gameDataHolderAccessor = new GameDataHolderAccessor(mIUseSceneObj);
-    const char * stageName = GameDataFunction::getCurrentStageName(*gameDataHolderAccessor);
+    GameDataHolderAccessor stageNameAccessor = GameDataHolderAccessor(mSceneObj);
+    const char* stageName = stageNameAccessor->getCurrentStageName();
 
     if (al::isEqualString(stageName, "MoonWorldCaptureParadeStage")) {
         mIsMoonCave = true;
     }
 
+    TankStateHack* tankStateHack = new TankStateHack(this, info, &TSHfloat1, &TSHfloat2, &TSHVector1, &Quat, &TSHfloat3);
+    mTankStateHack = tankStateHack;
+    al::initNerveState(this, tankStateHack, &NrvTank.Hack, "キャプチャ");
+
+    EnemyStateReset * enemyStateReset = new EnemyStateReset(this, info, 0);
+    mEnemyStateReset = enemyStateReset;
+    al::initNerveState(this, enemyStateReset, &NrvTank.Reset, "リセット");
+    EnemyStateSwoon* enemyStateSwoon = new EnemyStateSwoon(this, "SwoonStart", "Swoon", "SwoonEnd", 0, 1);
+    enemyStateSwoon->initParams(gEnemyStateSwoonInitParam);
+    al::initNerveState(this, mEnemyStateSwoon, &NrvTank.Swoon, "気絶");
+
+    const al::EnemyStateBlowDownParam* blowDownParam;
+    blowDownParam = &sEnemyCapBlowDownParam;
+    if (mIsMoonCave) {
+        blowDownParam = &sEnemyCapBlowDownParamParade;
+    }
+
+    al::EnemyStateBlowDown* enemyStateBlowDown = new al::EnemyStateBlowDown(this, blowDownParam, "吹き飛び状態");
+    mEnemyStateBlowDown = enemyStateBlowDown;
+    al::initNerveState(this, enemyStateBlowDown, &NrvTank.BlowDown, "吹き飛び");
+
+    EnemyStateReviveInsideScreen* enemyStateReviveInsideScreen1 = new EnemyStateReviveInsideScreen(this);
+    mEnemyStateReviveInsideScreen1 = enemyStateReviveInsideScreen1;
+    al::initNerveState(this, enemyStateReviveInsideScreen1, &NrvTank.ReviveInsideScreenNoAutoRevive, "画面内復活(外部制御)");
+
+    EnemyStateReviveInsideScreen* enemyStateReviveInsideScreen2 = new EnemyStateReviveInsideScreen(this);
+    mEnemyStateReviveInsideScreen2 = enemyStateReviveInsideScreen2;
+    al::initNerveState(this, enemyStateReviveInsideScreen2, &NrvTank.ReviveInsideScreen, "画面内復活");
+
+    GameDataHolderAccessor stageNameAccessor2 = GameDataHolderAccessor(mSceneObj);
+    const char* stageName2 = stageNameAccessor2->getCurrentStageName();
+
+    bool isMetro = al::isEqualString(stageName2, "CityWorldHomeStage");
+
+    if (isMetro) {
+        const char * moveLimit = "MoveLimit";
+    } else {
+        const char * moveLimit = "TankMoveLimitconst ";
+    }
+    al::CollisionPartsFilterBase* collisionPartsFilterBase;
+    al::setColliderFilterCollisionParts(this, collisionPartsFilterBase);
+    
+    EnemyStateDamageCap* enemyStateDamageCap = new EnemyStateDamageCap(this);
+    mEnemyStateDamageCap = enemyStateDamageCap;
+
+    al::initNerveState(this, enemyStateDamageCap,&NrvTank.DamageCap, "帽子ふきとび");
+    bool isExistRail = al::isExistRail(mIUseRail);
+    if (isExistRail) {
+        al::setRailPosToStart(mIUseRail);
+    }
     
 }
 
@@ -97,8 +149,8 @@ void Tank::disableShoot() {
 }
 
 void Tank::initAfterPlacement() {
-    if (mMtxConnector != nullptr)
-        al::attachMtxConnectorToCollision(mMtxConnector, this, false);
+    // if (mMtxConnector != nullptr)
+        // al::attachMtxConnectorToCollision(mMtxConnector, this, false);
     al::startMtpAnim(this, "AppearStart");
     bool iswet = al::isInAreaObj(this, "WetArea");
     al::updateMaterialCodeWet(this, iswet);
@@ -179,7 +231,7 @@ void Tank::isSwoon() {
 void Tank::appearCtrl() {}
 
 void Tank::preInitHandleByMofumofu() {
-    mIsHandled = true;
+    // mIsHandled = true;
 }
 
 void Tank::appearAndDemoWait() {}
@@ -195,7 +247,7 @@ void Tank::startShootByMofumofu() {
 void Tank::startBlowDownByMofumofu(al::HitSensor*) {}
 
 void Tank::startRevive() {
-    mEnemyStateReviveInsideScreen->startRevive();
+    // mEnemyStateReviveInsideScreen->startRevive();
 }
 
 void Tank::startRevivePrepare() {}
@@ -229,12 +281,7 @@ void Tank::exeWait() {}
 
 void Tank::exeMove() {}
 
-void Tank::exeHack() {
-    sead::Vector3f front;
-    al::calcFrontDir(&front, this);
-    f32 planeAngle = al::calcAngleOnPlaneDegree(mFrontDir, front, sead::Vector3f::ey);
-    mJointXRotate = planeAngle;
-}
+void Tank::exeHack() {}
 
 void Tank::exeReset() {}
 
@@ -248,7 +295,7 @@ void Tank::exeBlowDown() {
         al::setVelocityZero(this);
         al::setVelocityZero(this);
         al::startHitReaction(this, "死亡");
-        mJointXScale = 0;
+        // mJointXScale = 0;
     }
 }
 
@@ -275,8 +322,8 @@ void Tank::exeAttackHit() {
     // sead::Vector3f playerPos = rs::getPlayerPos(this);
     al::turnToTarget(this, rs::getPlayerPos(this), 8.0);
     al::calcFrontDir(&front, this);
-    f32 planeAngle = al::calcAngleOnPlaneDegree(mFrontDir, front, sead::Vector3f::ey);
-    mJointXRotate = planeAngle;
+    // f32 planeAngle = al::calcAngleOnPlaneDegree(mFrontDir, front, sead::Vector3f::ey);
+    // mJointXRotate = planeAngle;
     if (!al::isActionEnd(this))
         return;
     if (al::isExistRail(mIUseRail)) {

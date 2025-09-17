@@ -1,12 +1,16 @@
 #pragma once
 
 #include <basis/seadTypes.h>
+#include "Enemy/EnemyStateDamageCap.h"
 #include "Enemy/EnemyStateReviveInsideScreen.h"
+#include "Enemy/EnemyStateSwoon.h"
 #include "Enemy/TankBullet.h"
 #include "Enemy/TankStateHack.h"
 #include "Library/Collision/CollisionDirector.h"
+#include "Library/Collision/PartsMtxConnector.h"
 #include "Library/LiveActor/LiveActor.h"
 #include "Library/Movement/EnemyStateBlowDown.h"
+#include "Library/Nerve/NerveKeeper.h"
 #include "Library/Rail/IUseRail.h"
 #include "Library/Scene/IUseSceneObjHolder.h"
 #include "math/seadQuat.h"
@@ -21,6 +25,7 @@ class LiveActorGroup;
 class MtxConnector;
 class NerveStateBase;
 class SensorMsg;
+class EnemyStateBlowDown;
 }  // namespace al
 
 class EnemyStateReset;
@@ -82,28 +87,31 @@ public:
     s32 countAliveBullet();
 
 private:
-    
+    al::NerveKeeper* mNerveKeeper = nullptr;
+    al::IUseSceneObjHolder* mSceneObj = nullptr;
+    al::IUseRail* mIUseRail = nullptr;
 
 
+    TankStateHack* mTankStateHack = nullptr;
+    EnemyStateDamageCap* mEnemyStateDamageCap = nullptr;
+    EnemyStateReset* mEnemyStateReset = nullptr;
+    EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen1 = nullptr;
+    EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen2 = nullptr;
+    EnemyStateSwoon* mEnemyStateSwoon = nullptr;
+    al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;
+    al::MtxConnector* mMtxConnector = nullptr;
 
+    float TSHfloat1 = 0.0;
+    float TSHfloat2 = 0.0;
 
+    sead::Vector3f TSHVector1 = {0.0, 0.0, 0.0};
 
+    sead::Quatf Quat = {0.0, 0.0, 0.0, 0.0};
+    float TSHfloat3 = 0.0;
 
+    bool mCanShoot = true;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    bool mIsMoonCave = false;
 
 
 // al::IUseStageSwitch* mIUseStageSwitch = nullptr;  // 0x18

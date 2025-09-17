@@ -40821,7 +40821,7 @@ Enemy/Tank.o:
   - offset: 0x186558
     size: 268
     label: _ZN4TankC1EPKc
-    status: NotDecompiled
+    status: Wip
   - offset: 0x186664
     size: 1936
     label: _ZN4Tank4initERKN2al13ActorInitInfoE
