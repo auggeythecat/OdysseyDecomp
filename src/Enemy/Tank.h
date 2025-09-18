@@ -1,34 +1,27 @@
 #pragma once
 
 #include <basis/seadTypes.h>
-#include "Enemy/EnemyStateDamageCap.h"
-#include "Enemy/EnemyStateReviveInsideScreen.h"
-#include "Enemy/EnemyStateSwoon.h"
-#include "Enemy/TankBullet.h"
-#include "Enemy/TankStateHack.h"
-#include "Library/Collision/CollisionDirector.h"
-#include "Library/Collision/PartsMtxConnector.h"
+
 #include "Library/LiveActor/LiveActor.h"
-#include "Library/Movement/EnemyStateBlowDown.h"
-#include "Library/Nerve/NerveKeeper.h"
-#include "Library/Rail/IUseRail.h"
-#include "Library/Scene/IUseSceneObjHolder.h"
-#include "math/seadQuat.h"
-#include "math/seadVectorFwd.h"
 
 namespace al {
 struct ActorInitInfo;
 
+class EnemyStateBlowDown;
 class HitSensor;
 class LiveActor;
 class LiveActorGroup;
 class MtxConnector;
 class NerveStateBase;
 class SensorMsg;
-class EnemyStateBlowDown;
 }  // namespace al
 
 class EnemyStateReset;
+class EnemyStateDamageCap;
+class EnemyStateReviveInsideScreen;
+class EnemyStateSwoon;
+class TankBullet;
+class TankStateHack;
 
 class Tank : public al::LiveActor {
 public:
@@ -48,7 +41,7 @@ public:
     bool receiveMsg(const al::SensorMsg* message, al::HitSensor* other,
                     al::HitSensor* self) override;
     bool isMyBullet();
-    TankBullet shootByPlayer(const sead::Vector3f* vector, f32 float1, u32 int1); //I don't want to have to deal with TankBullet related errors
+    TankBullet shootByPlayer(const sead::Vector3f* vector, f32 float1, u32 int1);
     void isSwoon();
     void appearCtrl();
     void preInitHandleByMofumofu();
@@ -88,10 +81,8 @@ public:
 
 private:
     al::NerveKeeper* mNerveKeeper = nullptr;
-    al::IUseSceneObjHolder* mSceneObj = nullptr;
-    al::IUseRail* mIUseRail = nullptr;
 
-
+    al::LiveActorGroup* mBulletGroup = nullptr;
     TankStateHack* mTankStateHack = nullptr;
     EnemyStateDamageCap* mEnemyStateDamageCap = nullptr;
     EnemyStateReset* mEnemyStateReset = nullptr;
@@ -100,67 +91,22 @@ private:
     EnemyStateSwoon* mEnemyStateSwoon = nullptr;
     al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;
     al::MtxConnector* mMtxConnector = nullptr;
-    float mPose2w = 0.0;
-    float mPose2x = 0.0;
-    float mPose2y = 0.0;
-    float mPose2z = 0.0;
-
-
-
+    sead::Quatf mPose2 = {0.0, 0.0, 0.0, 0.0};
     float mCannonRotator = 0.0;
     float mCannonScalor = 0.0;
     float mHipRotator = 0.0;
     sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};
 
 
-
-
-    float mRWheelRotator = 0.0;
-    float mLWheelRotator = 0.0;
-
-    sead::Quatf Quat = {0.0, 0.0, 0.0, 0.0};
     float mPosey = 0.0;
     float mPosez = 0.0;
-
+    float mRWheelRotator = 0.0;
+    float mLWheelRotator = 0.0;
+    bool mIsOffCollideAtWait = false;
+    sead::Quatf mPose = {0.0, 0.0, 0.0, 0.0};
+    float mYRotator = 0.0;
+    float mClippingRadius = 0.0;
     bool mCanShoot = true;
-
+    bool mIsShootToCamera = false;
     bool mIsMoonCave = false;
-
-
-// al::IUseStageSwitch* mIUseStageSwitch = nullptr;  // 0x18
-//     al::IUseSceneObjHolder* mIUseSceneObj = nullptr;  // 0x20
-//     void* spacefiller1 = nullptr;
-//     al::IUseRail* mIUseRail = nullptr;  // 0x40
-
-//     al::LiveActorGroup* mActorGroup = nullptr;  // 0x108
-//     TankStateHack* mTankStateHack = nullptr;    // 0x110
-
-//     EnemyStateReviveInsideScreen* mEnemyStateReviveInsideScreen = nullptr;  // 0x128
-//     EnemyStateReset* mEnemyStateReset = nullptr;
-
-//     al::CollisionDirector* mCollisionDirector = nullptr;  // 0xb0
-
-//     al::MtxConnector* mMtxConnector = nullptr;              // 0x148
-//     al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;  // 0x140
-//     bool mIsMoonCave = false;
-
-//     f32 mJointZRotate = 0.0;  // 0x160
-//     f32 mJointXScale = 0.0;   // 0x164
-//     f32 mJointXRotate = 0.0;  // 0x168
-
-//     sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};  // 0x16c
-
-//     f32 mWheelRoateR = 0.0;  // 0x178
-//     f32 mWheelRoateL = 0.0;  // 0x17c
-
-//     bool mIsHandled = false;                   // 0x190
-//     sead::Quatf mQuat = {0.0, 0.0, 0.0, 0.0};  // 0x194
-
-//     al::NerveStateBase* mNerveStateBase = nullptr;
-
-//     f32 mCannonRotator = 0.0;  // 0x1a4
-
-//     bool filler1[8];
-//     // void* filler[0x1];
-//     bool mCanShoot = false;  // 0x1ac
 };

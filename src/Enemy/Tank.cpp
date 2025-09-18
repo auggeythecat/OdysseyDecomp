@@ -4,11 +4,11 @@
 #include "Enemy/EnemyStateReset.h"
 #include "Enemy/EnemyStateReviveInsideScreen.h"
 #include "Enemy/EnemyStateSwoon.h"
+#include "Enemy/TankBullet.h"
 #include "Enemy/TankStateHack.h"
 #include "Library/Base/StringUtil.h"
 #include "Library/Collision/KCollisionServer.h"
 #include "Library/Collision/PartsConnectorUtil.h"
-#include "Library/Collision/PartsMtxConnector.h"
 #include "Library/Item/ItemUtil.h"
 #include "Library/Joint/JointControllerKeeper.h"
 #include "Library/LiveActor/ActorActionFunction.h"
@@ -31,7 +31,9 @@
 #include "Library/Placement/PlacementFunction.h"
 #include "Library/Rail/IUseRail.h"
 #include "Library/Rail/RailUtil.h"
-#include "System/GameDataFunction.h"
+#include "Library/Stage/StageSwitchUtil.h"
+#include "Library/Thread/FunctorV0M.h"
+#include "System/GameDataHolder.h"
 #include "System/GameDataHolderAccessor.h"
 #include "Util/PlayerUtil.h"
 #include "math/seadMathCalcCommon.h"
@@ -70,31 +72,32 @@ Tank::Tank(const char* name) : al::LiveActor(name) {}
 
 void Tank::init(const al::ActorInitInfo& info) {
 
-    
+    using TankFunctor = al::FunctorV0M<Tank*, void (Tank::*)()>;
+
     al::initActorWithArchiveName(this, info, "Tank", nullptr);
     al::initNerve(this, &NrvTank.Wait, 7);
-    al::IUseRail* iUseRail = mIUseRail;
+    al::IUseRail* iUseRail = this;
 
     if (al::isExistRail(iUseRail)) {
         al::setRailPosToStart(iUseRail);
         al::syncRailTrans(this);
         al::setNerve(this, &NrvTank.Move);
     }
-    GameDataHolderAccessor stageNameAccessor = GameDataHolderAccessor(mSceneObj);
+    GameDataHolderAccessor stageNameAccessor = GameDataHolderAccessor(this);
     const char* stageName = stageNameAccessor->getCurrentStageName();
 
     if (al::isEqualString(stageName, "MoonWorldCaptureParadeStage")) {
         mIsMoonCave = true;
     }
 
-    TankStateHack* tankStateHack = new TankStateHack(this, info, &mCannonRotator, &mCannonScalor, &mFrontDir, &Quat, &TSHfloat3);
+    TankStateHack* tankStateHack = new TankStateHack(this, info, &mCannonRotator, &mCannonScalor, &mFrontDir, &mPose, &mYRotator);
     mTankStateHack = tankStateHack;
     al::initNerveState(this, tankStateHack, &NrvTank.Hack, "キャプチャ");
 
     EnemyStateReset * enemyStateReset = new EnemyStateReset(this, info, 0);
     mEnemyStateReset = enemyStateReset;
     al::initNerveState(this, enemyStateReset, &NrvTank.Reset, "リセット");
-    EnemyStateSwoon* enemyStateSwoon = new EnemyStateSwoon(this, "SwoonStart", "Swoon", "SwoonEnd", 0, 1);
+    EnemyStateSwoon* enemyStateSwoon = new EnemyStateSwoon(this, "SwoonStart", "Swoon", "SwoonEnd", false, true);
     enemyStateSwoon->initParams(gEnemyStateSwoonInitParam);
     al::initNerveState(this, mEnemyStateSwoon, &NrvTank.Swoon, "気絶");
 
@@ -116,26 +119,27 @@ void Tank::init(const al::ActorInitInfo& info) {
     mEnemyStateReviveInsideScreen2 = enemyStateReviveInsideScreen2;
     al::initNerveState(this, enemyStateReviveInsideScreen2, &NrvTank.ReviveInsideScreen, "画面内復活");
 
-    GameDataHolderAccessor stageNameAccessor2 = GameDataHolderAccessor(mSceneObj);
+    GameDataHolderAccessor stageNameAccessor2 = GameDataHolderAccessor(this);
     const char* stageName2 = stageNameAccessor2->getCurrentStageName();
 
     bool isMetro = al::isEqualString(stageName2, "CityWorldHomeStage");
 
+    const char* moveLimit;
     if (isMetro) {
-        const char * moveLimit = "MoveLimit";
+        moveLimit = "MoveLimit";
     } else {
-        const char * moveLimit = "TankMoveLimitconst ";
+        moveLimit = "TankMoveLimitconst ";
     }
-    al::CollisionPartsFilterBase* collisionPartsFilterBase;
-    al::setColliderFilterCollisionParts(this, collisionPartsFilterBase);
+
+    al::setColliderFilterCollisionParts(this, new al::CollisionPartsFilterSpecialPurpose(moveLimit));
     
     EnemyStateDamageCap* enemyStateDamageCap = new EnemyStateDamageCap(this);
     mEnemyStateDamageCap = enemyStateDamageCap;
 
     al::initNerveState(this, enemyStateDamageCap,&NrvTank.DamageCap, "帽子ふきとび");
-    bool isExistRail = al::isExistRail(mIUseRail);
+    bool isExistRail = al::isExistRail(this);
     if (isExistRail) {
-        al::setRailPosToStart(mIUseRail);
+        al::setRailPosToStart(this);
     }
 
     mMtxConnector = al::tryCreateMtxConnector(this, info);
@@ -166,12 +170,58 @@ void Tank::init(const al::ActorInitInfo& info) {
 
 
     sead::Quatf pose = al::getQuat(this);
+    mPose = pose;
+    sead::Quatf pose2 = al::getQuat(this);
+    mPose2 = pose2;
 
-    
+    al::initJointGlobalQuatController(this, &pose, "AllRoot");
+    al::initJointLocalYRotator(this, &mYRotator, "Cannon1");
 
+    al::LiveActorGroup* bulletGroup = new al::LiveActorGroup("タンク弾グループ", 5);
+    mBulletGroup = bulletGroup;
+    if (0 < bulletGroup->getActorCount()) {
+        for (int i = 0; i < bulletGroup->getActorCount(); ++i) {
+            TankBullet* tankBullet = new TankBullet("タンク弾");
+            al::initCreateActorNoPlacementInfo(tankBullet, info);
+            bulletGroup->registerActor(tankBullet);
+        }
+        bulletGroup = mBulletGroup;
+    }
+    bulletGroup->makeActorDeadAll();
+    if (al::isExistLinkChild(info, "ThroughCollision", 0)) {
+        al::LiveActor* linkedActor = al::createLinksActorFromFactory(info, "ThroughCollision", 0);
+        if (al::isExistCollisionParts(linkedActor)) {
+            al::createAndSetColliderFilterExistActor(this, linkedActor);
+            bulletGroup = mBulletGroup;
+            if (0 < bulletGroup->getActorCount()) {
+                for (int i = 0; i < bulletGroup->getActorCount(); ++i) {
+                    al::createAndSetColliderFilterExistActor(bulletGroup->getActor(i), linkedActor);
+                }
+            }
+        }
+    }
+    const char* capArg;
+    al::tryGetStringArg(&capArg, info, "CapType");
+    if (capArg == nullptr) {
+        enemyStateDamageCap = mEnemyStateDamageCap;
+        enemyStateDamageCap->createEnemyCap(info, "EnemyCapTank");
+    } else {
+        if (!al::isEqualString(capArg, "None")) {
+            enemyStateDamageCap = mEnemyStateDamageCap;
+            enemyStateDamageCap->createEnemyCap(info, "None");
+        }
+    }
+    al::startAction(this, "Wait");
+    if (al::listenStageSwitchOnOff(this, "EnableShoot", TankFunctor(this, &Tank::enableShoot), TankFunctor(this, &Tank::disableShoot))) {
+        mCanShoot = false;
+    }
 
-
-
+    if (al::trySyncStageSwitchAppearAndKill(this)) {
+        al::invalidateZPrePass(this);
+        al::tryGetArg(&mIsShootToCamera, info, "IsShootToCamera");
+        al::tryGetArg(&mIsOffCollideAtWait, info, "IsOffCollideAtWait");
+        mClippingRadius = al::getClippingRadius(this);
+    }
 }
 
 void Tank::enableShoot() {
@@ -196,9 +246,9 @@ void Tank::appear() {
     al::onCollide(this);
     al::startAction(this, "Wait");
     al::LiveActor::appear();
-    if (al::isExistRail(mIUseRail)) {
+    if (al::isExistRail(this)) {
         sead::Vector3f nearestRail;
-        al::calcNearestRailPos(&nearestRail, mIUseRail, al::getTrans(this));
+        al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
         sead::Vector3f transpost = al::getTrans(this);
 
         if (sead::Mathf::sqrt((nearestRail.x - transpost.x) * (nearestRail.x - transpost.x) +
@@ -217,11 +267,11 @@ void Tank::appear() {
 
 bool Tank::isExistAndNearRail() {
     bool israil;
-    if (al::isExistRail(mIUseRail)) {
+    if (al::isExistRail(this)) {
         return false;
     } else {
         sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
-        al::calcNearestRailPos(&nearestRail, mIUseRail, al::getTrans(this));
+        al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
         sead::Vector3f transpost = al::getTrans(this);
 
         israil = sead::Mathf::sqrt((nearestRail.x - transpost.x) * (nearestRail.x - transpost.x) +
@@ -255,7 +305,7 @@ bool Tank::isMyBullet() {
 }
 
 TankBullet Tank::shootByPlayer(const sead::Vector3f* vector, f32 float1, u32 int1) {
-
+    return nullptr;
 }
 
 void Tank::isSwoon() {
@@ -360,9 +410,9 @@ void Tank::exeAttackHit() {
     // mJointXRotate = planeAngle;
     if (!al::isActionEnd(this))
         return;
-    if (al::isExistRail(mIUseRail)) {
+    if (al::isExistRail(this)) {
         sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
-        al::calcNearestRailPos(&nearestRail, mIUseRail, al::getTrans(this));
+        al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
         sead::Vector3f transpost = al::getTrans(this);
 
         if (sead::Mathf::sqrt((nearestRail.x - transpost.x) * (nearestRail.x - transpost.x) +
