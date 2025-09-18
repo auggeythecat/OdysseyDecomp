@@ -33,12 +33,12 @@
 #include "Library/Rail/RailUtil.h"
 #include "Library/Stage/StageSwitchUtil.h"
 #include "Library/Thread/FunctorV0M.h"
-#include "System/GameDataHolder.h"
-#include "System/GameDataHolderAccessor.h"
-#include "Util/PlayerUtil.h"
 #include "math/seadMathCalcCommon.h"
 #include "math/seadQuat.h"
 #include "math/seadVectorFwd.h"
+#include "Util/PlayerUtil.h"
+#include "System/GameDataHolder.h"
+#include "System/GameDataHolderAccessor.h"
 
 namespace {
 NERVE_IMPL(Tank, Wait)
@@ -200,6 +200,20 @@ void Tank::init(const al::ActorInitInfo& info) {
             }
         }
     }
+
+    if (mIsCapInit) {
+        if (al::listenStageSwitchOnOff(this, "EnableShoot", TankFunctor(this, &Tank::enableShoot), TankFunctor(this, &Tank::disableShoot))) {
+            mCanShoot = false;
+        }
+
+        if (al::trySyncStageSwitchAppearAndKill(this)) {
+            al::invalidateZPrePass(this);
+            al::tryGetArg(&mIsShootToCamera, info, "IsShootToCamera");
+            al::tryGetArg(&mIsOffCollideAtWait, info, "IsOffCollideAtWait");
+            mClippingRadius = al::getClippingRadius(this);
+        }
+    }
+
     const char* capArg;
     al::tryGetStringArg(&capArg, info, "CapType");
     if (capArg == nullptr) {
@@ -233,34 +247,30 @@ void Tank::disableShoot() {
 }
 
 void Tank::initAfterPlacement() {
-    // if (mMtxConnector != nullptr)
-        // al::attachMtxConnectorToCollision(mMtxConnector, this, false);
+    if (mMtxConnector != nullptr) { 
+        al::attachMtxConnectorToCollision(mMtxConnector, this, false); 
+    }
     al::startMtpAnim(this, "AppearStart");
-    bool iswet = al::isInAreaObj(this, "WetArea");
-    al::updateMaterialCodeWet(this, iswet);
+    al::updateMaterialCodeWet(this, al::isInAreaObj(this, "WetArea"));
 }
 
 void Tank::appear() {
-    if (al::isAlive(this) && al::isNerve(this, &NrvTank.Reset))
-        return;
+
+    al::Nerve* nerve;
+    if (al::isAlive(this) && al::isNerve(this, &NrvTank.Reset)) { return; }
     al::onCollide(this);
     al::startAction(this, "Wait");
     al::LiveActor::appear();
-    if (al::isExistRail(this)) {
-        sead::Vector3f nearestRail;
+    if (al::isExistRail(this)) {    
+        sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
         al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
-        sead::Vector3f transpost = al::getTrans(this);
-
-        if (sead::Mathf::sqrt((nearestRail.x - transpost.x) * (nearestRail.x - transpost.x) +
-                              (nearestRail.y - transpost.y) * (nearestRail.y - transpost.y) +
-                              (nearestRail.z - transpost.z) * (nearestRail.z - transpost.z)) <=
-            150.0) {
-            al::Nerve* nerve = &NrvTank.Move;
-            al::setNerve(this, nerve);
-            return;
+        float length = (nearestRail - al::getTrans(this)).length();
+        if (length <= 150.0f) {
+            nerve = &NrvTank.Move;
+        } else {
+            nerve = &NrvTank.Wait;
         }
     }
-    al::Nerve* nerve = &NrvTank.Wait;
     al::setNerve(this, nerve);
     return;
 }
@@ -315,7 +325,7 @@ void Tank::isSwoon() {
 void Tank::appearCtrl() {}
 
 void Tank::preInitHandleByMofumofu() {
-    // mIsHandled = true;
+
 }
 
 void Tank::appearAndDemoWait() {}

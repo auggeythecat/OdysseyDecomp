@@ -277,7 +277,7 @@ bool TankStateHack::tryChangeNerveIfTrigerShoot() {
         al::calcJointPos(&Jointpos, mTankActor, "Shoot");
         sead::Vector3f shootPos = mShootLimit - Jointpos;
         al::normalize(&shootPos);
-        mTankActor->shootByPlayer(&shootPos, 75.0, 90);
+        // mTankActor->shootByPlayer(&shootPos, 75.0, 90);
         al::setNerve(this, &NrvTankStateHack.ShootReload);
     }
 

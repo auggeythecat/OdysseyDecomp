@@ -80,8 +80,6 @@ public:
     s32 countAliveBullet();
 
 private:
-    al::NerveKeeper* mNerveKeeper = nullptr;
-
     al::LiveActorGroup* mBulletGroup = nullptr;
     TankStateHack* mTankStateHack = nullptr;
     EnemyStateDamageCap* mEnemyStateDamageCap = nullptr;
@@ -102,6 +100,8 @@ private:
     float mPosez = 0.0;
     float mRWheelRotator = 0.0;
     float mLWheelRotator = 0.0;
+
+    bool mIsCapInit = false;
     bool mIsOffCollideAtWait = false;
     sead::Quatf mPose = {0.0, 0.0, 0.0, 0.0};
     float mYRotator = 0.0;
