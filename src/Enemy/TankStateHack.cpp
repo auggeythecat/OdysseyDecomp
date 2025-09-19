@@ -1,11 +1,5 @@
 #include "Enemy/TankStateHack.h"
 
-// #include <basis/seadtypes.h>
-#include <math/seadQuat.h>
-#include <math/seadVector.h>
-
-#include "Enemy/Tank.h"
-#include "Layout/AimingCursor.h"
 #include "Library/Audio/IUseAudioKeeper.h"
 #include "Library/Camera/CameraArrowCollider.h"
 #include "Library/Camera/CameraPoser.h"
@@ -26,25 +20,22 @@
 #include "Library/LiveActor/ActorSensorUtil.h"
 #include "Library/LiveActor/LiveActor.h"
 #include "Library/Math/IntervalTrigger.h"
-// #include "Library/Math/MathUtil.h"
 #include "Library/Math/MathUtil.h"
 #include "Library/Nerve/Nerve.h"
 #include "Library/Nerve/NerveSetupUtil.h"
-// #include "Library/Thread/FunctorV0M.h"
+#include "Library/Nerve/NerveUtil.h"
 #include "Library/Se/Function/SeFunction.h"
+#include "Library/Se/SeFunction.h"
+#include "Library/Thread/FunctorV0M.h"
 
 #include "Enemy/EnemyStateHackStart.h"
-#include "Library/Nerve/NerveUtil.h"
-#include "Library/Se/SeFunction.h"
+#include "Enemy/Tank.h"
+#include "Layout/AimingCursor.h"
 #include "Player/HackerJudge.h"
 #include "Player/IUsePlayerHack.h"
 #include "Util/Hack.h"
 #include "Util/JudgeUtil.h"
 #include "Util/SensorMsgFunction.h"
-#include "math/seadQuat.h"
-#include "math/seadQuatCalcCommon.h"
-#include "math/seadVectorFwd.h"
-#include "Library/LiveActor/ActorClippingFunction.h"
 
 namespace {
 NERVE_IMPL(TankStateHack, Wait)
@@ -61,12 +52,12 @@ NERVES_MAKE_STRUCT(TankStateHack, Wait, StartDemo, Fall, Move, Land, ShootReload
 TankStateHack::TankStateHack(Tank* parent, const al::ActorInitInfo& initinfo, f32* float1,
                              f32* float2, sead::Vector3f* vec3, sead::Quatf* quat, f32* float3)
     : al::ActorStateBase::ActorStateBase("キャプチャステート", parent) {
-    mvec3 = vec3;
+    mVec3 = vec3;
     mTankActor = parent;
-    mfloat1 = float1;
-    mfloat2 = float2;
+    mFloat1 = float1;
+    mFloat2 = float2;
     mPose = quat;
-    mfloat3 = float3;
+    mFloat3 = float3;
 
     al::NerveExecutor::initNerve(&NrvTankStateHack.Wait, 1);
 
@@ -126,11 +117,11 @@ void TankStateHack::appear() {
 
 void TankStateHack::kill() {
     al::setModelAlphaMask(mTankActor, 1.0);
-    mfloat4 = 0.0;
+    mFloat4 = 0.0;
     mNotfloat5 = 0;
     al::validateDitherAnim(mTankActor);
     mAimingCursor->end();
-    mfloat1 = 0;
+    mFloat1 = 0;
     al::showModelIfHide(mTankActor);
     al::setNerve(this, &NrvTankStateHack.StartDemo);
     if (al::isActiveCamera(mCameraTicket)) {
@@ -166,12 +157,12 @@ void TankStateHack::control() {
 }
 
 void TankStateHack::reset() {
-    mInt1 = 0;      // 0x68
-    mInt2 = 0;      // 0x70
-    mInt3 = 0;      // 0x74
-    mInt4 = 0;      // 0x7c
+    mInt1 = 0;                       // 0x68
+    mInt2 = 0;                       // 0x70
+    mInt3 = 0;                       // 0x74
+    mInt4 = 0;                       // 0x7c
     mFront_Maybe = {0.0, 0.0, 0.0};  // 0x80
-    mInt5 = 0;      // 0x88
+    mInt5 = 0;                       // 0x88
 }
 
 void TankStateHack::receiveMsgInitCapTargetInfo(const al::SensorMsg* message) {
@@ -226,12 +217,10 @@ bool TankStateHack::receiveMsgHackEnd(const al::SensorMsg* message, al::HitSenso
 }
 
 void TankStateHack::endHack() {
-    
     al::validateClipping(mLiveActor);
     al::startVisAnim(mLiveActor, "HackOff");
     sead::Vector3f gotTrans = al::getTrans(mTankActor);
     sead::Vector3f gottranscopy = gotTrans;
-
 }
 
 void TankStateHack::attackSensor(al::HitSensor* other, al::HitSensor* self) {
@@ -248,13 +237,13 @@ void TankStateHack::updatePose() {
     if (al::isOnGround(mTankActor, 0)) {
         if (al::isNerve(this, &NrvTankStateHack.Fall)) {
             al::makeQuatUpFront(&qStack1, sead::Vector3f::ey, frontDir);
-            sead::QuatCalcCommon<float>::slerpTo(*mPose, *mPose, qStack1, 0.15);
-            misUnkown = false;
+            sead::QuatCalcCommon<f32>::slerpTo(*mPose, *mPose, qStack1, 0.15);
+            mIsUnkown = false;
         }
     } else {
         al::makeQuatUpFront(&qStack1, mFront_Maybe, frontDir);
-        sead::QuatCalcCommon<float>::slerpTo(*mPose, *mPose, qStack1, 0.15);
-        misUnkown = al::calcAngleDegree(mFront_Maybe, sead::Vector3f::ey);
+        sead::QuatCalcCommon<f32>::slerpTo(*mPose, *mPose, qStack1, 0.15);
+        mIsUnkown = al::calcAngleDegree(mFront_Maybe, sead::Vector3f::ey);
     }
     if (!al::isNerve(this, &NrvTankStateHack.StartDemo)) {
         // al::calcQuatUp(qStack1, mPose);
@@ -264,15 +253,12 @@ void TankStateHack::updatePose() {
 
 void TankStateHack::updateVelocity(bool calcmove) {}
 
-void TankStateHack::updateCamera() {
-    
-}
+void TankStateHack::updateCamera() {}
 
 bool TankStateHack::tryChangeNerveIfTrigerShoot() {
-
     bool triggerhack = rs::isTriggerHackAnyButton(mIUsePlayerHack);
     if (triggerhack) {
-        alCameraPoserFunction::reduceGyroSencitivity((al::CameraPoser *) mCameraTicket);
+        alCameraPoserFunction::reduceGyroSencitivity((al::CameraPoser*)mCameraTicket);
         sead::Vector3f Jointpos = {0.0, 0.0, 0.0};
         al::calcJointPos(&Jointpos, mTankActor, "Shoot");
         sead::Vector3f shootPos = mShootLimit - Jointpos;
@@ -284,7 +270,7 @@ bool TankStateHack::tryChangeNerveIfTrigerShoot() {
     return triggerhack;
 }
 
-void TankStateHack::forceEndIfHack() {}
+bool TankStateHack::forceEndIfHack() {}
 
 void TankStateHack::calcAimCursorLayoutPos() {}
 
@@ -301,11 +287,10 @@ void TankStateHack::exeWait() {
     updatePose();
     if (!tryChangeNerveIfTrigerShoot()) {
         if (!rs::updateJudgeAndResult(mHackerJudgeFall)) {
-            if (rs::isHackerStopMove(mTankActor, mIUsePlayerHack, 6.0)) {
+            if (rs::isHackerStopMove(mTankActor, mIUsePlayerHack, 6.0))
                 return;
-            }
             nerve = &NrvTankStateHack.Move;
-        } else { 
+        } else {
             nerve = &NrvTankStateHack.Fall;
         }
         al::setNerve(this, nerve);
@@ -326,11 +311,10 @@ void TankStateHack::exeMove() {
 
     if (!tryChangeNerveIfTrigerShoot()) {
         if (!rs::updateJudgeAndResult(mHackerJudgeFall)) {
-            if (!rs::isHackerStopMove(mTankActor, mIUsePlayerHack, 6.0)) {
+            if (!rs::isHackerStopMove(mTankActor, mIUsePlayerHack, 6.0))
                 return;
-            }
             nerve = &NrvTankStateHack.Wait;
-        } else { 
+        } else {
             nerve = &NrvTankStateHack.Fall;
         }
         al::setNerve(this, nerve);
@@ -344,34 +328,33 @@ void TankStateHack::exeShoot() {
         al::startAction(mTankActor, "Shoot");
         al::startHitReaction(mTankActor, "発射");
         al::setVelocityZero(mTankActor);
-        ++mBulletCount;        
+        ++mBulletCount;
     }
     al::isGreaterEqualStep(this, 15);
     updateVelocity(false);
     updateCamera();
     updatePose();
-    if (al::isGreaterEqualStep(this, 17) && (((mBulletCount < 3 || (mTankActor->countAliveBullet() < 2)) && tryChangeNerveIfTrigerShoot()))) {
-    return;
-  }
+    if (al::isGreaterEqualStep(this, 17) &&
+        (((mBulletCount < 3 || (mTankActor->countAliveBullet() < 2)) &&
+          tryChangeNerveIfTrigerShoot()))) {
+        return;
+    }
 }
 
 void TankStateHack::exeShootReload() {}
 
 void TankStateHack::exeFall() {
-    if (al::isFirstStep(this)) {
+    if (al::isFirstStep(this))
         al::startAction(mLiveActor, "Wait");
-    }
     updateVelocity(false);
     updateCamera();
     updatePose();
-    if(tryChangeNerveIfTrigerShoot()) {
+    if (tryChangeNerveIfTrigerShoot()) {
         mIsFalling = true;
         mIsStanding = false;
-    } else {
-        if (al::isOnGround(mLiveActor, 0)) {
-            al::reboundVelocityFromCollision(mTankActor, 0.0, 0.0, 1.0);
-            al::setNerve(this, &NrvTankStateHack.Land);
-        }
+    } else if (al::isOnGround(mLiveActor, 0)) {
+        al::reboundVelocityFromCollision(mTankActor, 0.0, 0.0, 1.0);
+        al::setNerve(this, &NrvTankStateHack.Land);
     }
 }
 
@@ -383,7 +366,6 @@ void TankStateHack::exeLand() {
     updateVelocity(false);
     updateCamera();
     updatePose();
-    if (al::isActionEnd(mTankActor)) {
+    if (al::isActionEnd(mTankActor))
         al::setNerve(this, &NrvTankStateHack.Wait);
-    }
 }

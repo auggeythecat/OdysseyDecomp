@@ -1,12 +1,7 @@
 #pragma once
 
-// #include <basis/seadtypes.h>
-#include <math/seadQuat.h>
-#include <math/seadVector.h>
-
 #include "Library/LiveActor/LiveActor.h"
 #include "Library/Nerve/NerveStateBase.h"
-#include "math/seadVectorFwd.h"
 
 namespace al {
 struct ActorInitInfo;
@@ -53,7 +48,7 @@ public:
     void updateVelocity(bool calcmove);
     void updateCamera();
     bool tryChangeNerveIfTrigerShoot();
-    void forceEndIfHack();
+    bool forceEndIfHack();
     void calcAimCursorLayoutPos();
     void shoot();
 
@@ -66,42 +61,40 @@ public:
     void exeLand();
 
 private:
-    bool mIsDead = false; // 0x10
-    al::LiveActor* mLiveActor = nullptr; // 0x18
-    Tank* mTankActor = nullptr;                               // 0x20
-    AimingCursor* mAimingCursor = nullptr;                    // 0x28
-    IUsePlayerHack* mIUsePlayerHack = nullptr;                // 0x30
-    const CapTargetInfo* mCapTargetInfo = nullptr;            // 0x38
-    EnemyStateHackStart* mHackStart = nullptr;                // 0x40
-    HackerJudgeNormalFall* mHackerJudgeFall = nullptr;        // 0x48
-    f32* mfloat1 = nullptr;                                   // 0x50
-    f32* mfloat2 = nullptr;                                   // 0x58
-    sead::Vector3f* mvec3 = nullptr;                          // 0x60
-    u64 mInt1 = 0;                                            // 0x68
-    u32 mInt2 = 0;                                            // 0x70
-    u64 mInt3 = 0;                                            // 0x74
-    u32 mInt4 = 0;                                            // 0x7c
-    sead::Vector3f mFront_Maybe = {0.0, 0.0, 0.0};     // 0x80
-    u32 mInt5 = 0;                                            // 0x88
-    al::CameraTicket* mCameraTicket = nullptr;                // 0x90
-    al::CameraArrowCollider* mCameraArrowCollider = nullptr;  // 0x98
-    sead::Vector3f mCamPosition = {0.0, 0.0, 0.0};            // 0xa0
-    sead::Vector3f mCamRotation = {0.0, 0.0, 0.0};            // 0xb8
-    sead::Vector3f mShootLimit = {0.0, 0.0, 0.0}; // 0xc4
+    bool mIsDead = false;
+    al::LiveActor* mLiveActor = nullptr;
+    Tank* mTankActor = nullptr;
+    AimingCursor* mAimingCursor = nullptr;
+    IUsePlayerHack* mIUsePlayerHack = nullptr;
+    const CapTargetInfo* mCapTargetInfo = nullptr;
+    EnemyStateHackStart* mHackStart = nullptr;
+    HackerJudgeNormalFall* mHackerJudgeFall = nullptr;
+    f32* mFloat1 = nullptr;
+    f32* mFloat2 = nullptr;
+    sead::Vector3f* mVec3 = nullptr;
+    u64 mInt1 = 0;
+    u32 mInt2 = 0;
+    u64 mInt3 = 0;
+    u32 mInt4 = 0;
+    sead::Vector3f mFront_Maybe = {0.0, 0.0, 0.0};
+    u32 mInt5 = 0;
+    al::CameraTicket* mCameraTicket = nullptr;
+    al::CameraArrowCollider* mCameraArrowCollider = nullptr;
+    sead::Vector3f mCamPosition = {0.0, 0.0, 0.0};
+    sead::Vector3f mCamRotation = {0.0, 0.0, 0.0};
+    sead::Vector3f mShootLimit = {0.0, 0.0, 0.0};
 
+    u32 mBulletCount = 0;
 
+    bool mIsStanding = false;
+    sead::Vector3f mSomeVec = {57.5, -25.0, 0.8};
+    bool mIsUnkown = false;
 
-    u32 mBulletCount = 0; // 0x108 Something with shooting/counting shot
+    sead::Quatf* mPose = nullptr;
+    f32* mFloat3 = nullptr;
+    al::IntervalTrigger* mIntervalTrigger = nullptr;
 
-    bool mIsStanding = false; // 0x108 used in exeFall, name uncertain.
-    sead::Vector3f mSomeVec = {57.5, -25.0, 0.8};  // 0x11c
-    bool misUnkown = false; // 0x118
-
-    sead::Quatf* mPose = nullptr;                     // 0x128
-    f32* mfloat3 = nullptr;                           // 0x130
-    al::IntervalTrigger* mIntervalTrigger = nullptr;  // 0x138
-
-    f32 mfloat4 = 0.0;        // 0x140
-    bool mIsFalling = false;  // 0x144
-    u32 mNotfloat5 = 0;       // 0x148 (Used in appear, and kill UKNOWN NAME)
+    f32 mFloat4 = 0.0;
+    bool mIsFalling = false;
+    u32 mNotfloat5 = 0;
 };

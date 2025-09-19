@@ -41,7 +41,7 @@ public:
     bool receiveMsg(const al::SensorMsg* message, al::HitSensor* other,
                     al::HitSensor* self) override;
     bool isMyBullet();
-    TankBullet shootByPlayer(const sead::Vector3f* vector, f32 float1, u32 int1);
+    TankBullet shootByPlayer(const sead::Vector3f* vector, f32 f321, u32 int1);
     void isSwoon();
     void appearCtrl();
     void preInitHandleByMofumofu();
@@ -90,23 +90,24 @@ private:
     al::EnemyStateBlowDown* mEnemyStateBlowDown = nullptr;
     al::MtxConnector* mMtxConnector = nullptr;
     sead::Quatf mPose2 = {0.0, 0.0, 0.0, 0.0};
-    float mCannonRotator = 0.0;
-    float mCannonScalor = 0.0;
-    float mHipRotator = 0.0;
+    f32 mCannonRotator = 0.0;
+    f32 mCannonScalor = 0.0;
+    f32 mHipRotator = 0.0;
     sead::Vector3f mFrontDir = {0.0, 0.0, 0.0};
 
+    void* mNothing = nullptr;
 
-    float mPosey = 0.0;
-    float mPosez = 0.0;
-    float mRWheelRotator = 0.0;
-    float mLWheelRotator = 0.0;
+    f32 mPosey = 0.0;
+    f32 mPosez = 0.0;
+    f32 mRWheelRotator = 0.0;
+    f32 mLWheelRotator = 0.0;
 
     bool mIsCapInit = false;
     bool mIsOffCollideAtWait = false;
     sead::Quatf mPose = {0.0, 0.0, 0.0, 0.0};
-    float mYRotator = 0.0;
-    float mClippingRadius = 0.0;
-    bool mCanShoot = true;
+    f32 mYRotator = 0.0;
+    f32 mClippingRadius = 0.0;
+    bool mIsShoot = true;
     bool mIsShootToCamera = false;
     bool mIsMoonCave = false;
 };

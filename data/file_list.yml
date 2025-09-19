@@ -40855,7 +40855,7 @@ Enemy/Tank.o:
   - offset: 0x187054
     size: 624
     label: _ZN4Tank7controlEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x1872c4
     size: 148
     label: _ZN4Tank3dieEv
