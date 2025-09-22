@@ -42,7 +42,7 @@ public:
                     al::HitSensor* self) override;
     bool isMyBullet();
     TankBullet shootByPlayer(const sead::Vector3f* vector, f32 f321, u32 int1);
-    void isSwoon();
+    void isSwoon() const;
     void appearCtrl();
     void preInitHandleByMofumofu();
     void appearAndDemoWait();
@@ -54,9 +54,9 @@ public:
     void forceEndHackByMofumofu();
     void setSubjectiveCameraLimitDegree(f32 tmpname, f32 tmpname2);
     void setSubjectiveCameraAimFollowRateV(f32 tmpname);
-    void isHacking();
-    bool isRevivePrepare();
-    bool isEnableStartAttack();
+    void isHacking() const;
+    bool isRevivePrepare() const;
+    bool isEnableStartAttack() const;
     void turn();
     bool isEnableShoot();
 
@@ -102,7 +102,9 @@ private:
     f32 mRWheelRotator = 0.0;
     f32 mLWheelRotator = 0.0;
 
-    bool mIsCapInit = false;
+    bool mIsCaptured = false;
+    bool mIsUnkown = false;
+    bool mIsNerveReset = false;
     bool mIsOffCollideAtWait = false;
     sead::Quatf mPose = {0.0, 0.0, 0.0, 0.0};
     f32 mYRotator = 0.0;

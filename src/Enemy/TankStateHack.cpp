@@ -8,7 +8,6 @@
 #include "Library/Camera/CameraUtil.h"
 #include "Library/Camera/IUseCamera.h"
 #include "Library/Collision/CollisionDirector.h"
-#include "Library/Layout/LayoutInitInfo.h"
 #include "Library/LiveActor/ActorActionFunction.h"
 #include "Library/LiveActor/ActorAnimFunction.h"
 #include "Library/LiveActor/ActorClippingFunction.h"
@@ -49,15 +48,16 @@ NERVE_IMPL(TankStateHack, Shoot)
 NERVES_MAKE_STRUCT(TankStateHack, Wait, StartDemo, Fall, Move, Land, ShootReload, Shoot)
 }  // namespace
 
-TankStateHack::TankStateHack(Tank* parent, const al::ActorInitInfo& initinfo, f32* float1,
-                             f32* float2, sead::Vector3f* vec3, sead::Quatf* quat, f32* float3)
+TankStateHack::TankStateHack(Tank* parent, const al::ActorInitInfo& info, f32* CannonRotator,
+                             f32* CannonScalor, sead::Vector3f* FrontDir, sead::Quatf* Pose,
+                             f32* YRotator)
     : al::ActorStateBase::ActorStateBase("キャプチャステート", parent) {
-    mVec3 = vec3;
+    mFrontDir = FrontDir;
     mTankActor = parent;
-    mFloat1 = float1;
-    mFloat2 = float2;
-    mPose = quat;
-    mFloat3 = float3;
+    mCannonRotator = CannonRotator;
+    mCannonScalor = CannonScalor;
+    mPose = Pose;
+    mYRotator = YRotator;
 
     al::NerveExecutor::initNerve(&NrvTankStateHack.Wait, 1);
 
@@ -71,11 +71,11 @@ TankStateHack::TankStateHack(Tank* parent, const al::ActorInitInfo& initinfo, f3
     al::IUseCamera* iUseCamera;
     if (parent != nullptr)
         iUseCamera = (al::IUseCamera*)parent;
-    al::CameraTicket* cameraTicket = al::initProgramableCamera(
-        iUseCamera, initinfo, nullptr, &mCamPosition, &mCamRotation, (nullptr));
-    mCameraTicket = cameraTicket;
+    // al::CameraTicket* cameraTicket = al::initProgramableCamera(
+    // iUseCamera, info, nullptr, &mCamPosition, &mCamRotation, (nullptr));
+    // mCameraTicket = cameraTicket;
 
-    alCameraFunction::initPriorityCapture(cameraTicket);
+    // alCameraFunction::initPriorityCapture(cameraTicket);
     alCameraPoserFunction::initGyroCameraCtrl((al::CameraPoser*)mCameraTicket);
     alCameraPoserFunction::initSnapShotCameraCtrl((al::CameraPoser*)mCameraTicket);
     alCameraPoserFunction::validateSnapShotCameraZoomFovy((al::CameraPoser*)mCameraTicket);
@@ -89,16 +89,16 @@ TankStateHack::TankStateHack(Tank* parent, const al::ActorInitInfo& initinfo, f3
     HackerJudgeNormalFall* hackerJudgeFall = new HackerJudgeNormalFall(parent, 5);
     mHackerJudgeFall = hackerJudgeFall;
 
-    al::LayoutInitInfo layoutInfo = al::getLayoutInitInfo(initinfo);
-    AimingCursor* aimingCursor = new AimingCursor("タンク照準レイアウト", layoutInfo);
-    mAimingCursor = aimingCursor;
+    // al::Layoutinfo layoutInfo = al::getLayoutinfo(info);
+    // AimingCursor* aimingCursor = new AimingCursor("タンク照準レイアウト", layoutInfo);
+    // mAimingCursor = aimingCursor;
 }
 
 void TankStateHack::appear() {
     al::IUseAudioKeeper* iUseAudioKeeper;
     mIsDead = false;
     al::invalidateDitherAnim(mTankActor);
-    mNotfloat5 = 0;
+    // mNotfloat5 = 0;
     al::setCameraFovyDegree(mCameraTicket, 50.0);
     al::setNerve(this, &NrvTankStateHack.StartDemo);
     iUseAudioKeeper = nullptr;
@@ -117,11 +117,11 @@ void TankStateHack::appear() {
 
 void TankStateHack::kill() {
     al::setModelAlphaMask(mTankActor, 1.0);
-    mFloat4 = 0.0;
-    mNotfloat5 = 0;
+    // mFloat4 = 0.0;
+    // mNotfloat5 = 0;
     al::validateDitherAnim(mTankActor);
     mAimingCursor->end();
-    mFloat1 = 0;
+    // mFloat1 = 0;
     al::showModelIfHide(mTankActor);
     al::setNerve(this, &NrvTankStateHack.StartDemo);
     if (al::isActiveCamera(mCameraTicket)) {
@@ -156,14 +156,7 @@ void TankStateHack::control() {
     al::tryStartVisAnimIfNotPlaying(mTankActor, hackcap);
 }
 
-void TankStateHack::reset() {
-    mInt1 = 0;                       // 0x68
-    mInt2 = 0;                       // 0x70
-    mInt3 = 0;                       // 0x74
-    mInt4 = 0;                       // 0x7c
-    mFront_Maybe = {0.0, 0.0, 0.0};  // 0x80
-    mInt5 = 0;                       // 0x88
-}
+void TankStateHack::reset() {}
 
 void TankStateHack::receiveMsgInitCapTargetInfo(const al::SensorMsg* message) {
     rs::tryReceiveMsgInitCapTargetAndSetCapTargetInfo(message, mCapTargetInfo);

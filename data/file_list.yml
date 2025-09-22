@@ -40843,11 +40843,11 @@ Enemy/Tank.o:
   - offset: 0x186e60
     size: 276
     label: _ZN4Tank6appearEv
-    status: Wip
+    status: Matching
   - offset: 0x186f74
     size: 188
     label: _ZN4Tank18isExistAndNearRailEv
-    status: Wip
+    status: Matching
   - offset: 0x187030
     size: 36
     label: _ZN4Tank4killEv
@@ -40859,19 +40859,19 @@ Enemy/Tank.o:
   - offset: 0x1872c4
     size: 148
     label: _ZN4Tank3dieEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187358
     size: 80
     label: _ZN4Tank8calcAnimEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x1873a8
     size: 404
     label: _ZN4Tank12attackSensorEPN2al9HitSensorES2_
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18753c
     size: 1816
     label: _ZN4Tank10receiveMsgEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: NotDecompiled
+    status: Wip
   - offset: 0x187c54
     size: 96
     label: _ZN4Tank10isMyBulletEPN2al9HitSensorE
@@ -40883,19 +40883,19 @@ Enemy/Tank.o:
   - offset: 0x187de0
     size: 16
     label: _ZNK4Tank7isSwoonEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187df0
     size: 80
     label: _ZN4Tank10appearCtrlEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187e40
     size: 12
     label: _ZN4Tank23preInitHandleByMofumofuEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187e4c
     size: 52
     label: _ZN4Tank17appearAndDemoWaitEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x187e80
     size: 12
     label: _ZN4Tank11endDemoWaitEv
@@ -40907,19 +40907,19 @@ Enemy/Tank.o:
   - offset: 0x187e9c
     size: 228
     label: _ZN4Tank23startBlowDownByMofumofuEPN2al9HitSensorE
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187f80
     size: 8
     label: _ZN4Tank11startReviveEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187f88
     size: 16
     label: _ZN4Tank18startRevivePrepareEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187f98
     size: 56
     label: _ZN4Tank22forceEndHackByMofumofuEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187fd0
     size: 16
     label: _ZN4Tank30setSubjectiveCameraLimitDegreeEff
@@ -40931,15 +40931,15 @@ Enemy/Tank.o:
   - offset: 0x187fec
     size: 16
     label: _ZNK4Tank9isHackingEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187ffc
     size: 68
     label: _ZNK4Tank15isRevivePrepareEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x188040
     size: 68
     label: _ZNK4Tank19isEnableStartAttackEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x188084
     size: 320
     label: _ZN4Tank7exeWaitEv
@@ -40975,7 +40975,7 @@ Enemy/Tank.o:
   - offset: 0x188e60
     size: 92
     label: _ZN4Tank33exeReviveInsideScreenNoAutoReviveEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x188ebc
     size: 280
     label: _ZN4Tank21exeReviveInsideScreenEv
@@ -40983,7 +40983,7 @@ Enemy/Tank.o:
   - offset: 0x188fd4
     size: 248
     label: _ZN4Tank16exePressReactionEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x1890cc
     size: 236
     label: _ZN4Tank12exePressDownEv
@@ -40995,7 +40995,7 @@ Enemy/Tank.o:
   - offset: 0x189288
     size: 228
     label: _ZN4Tank12exeDamageCapEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18936c
     size: 308
     label: _ZN4Tank12exeAttackHitEv

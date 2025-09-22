@@ -26,4 +26,13 @@ public:
     void exeYoshiEat();
 
 private:
+    s32 mUnusedInt = -1;
+    bool mIsShotByPlayer = false;
+    bool mPad_10D[3];
+    sead::Vector3f mStartingPos = {0.0f, 0.0f, 0.0f};
+    sead::Vector3f mUnkVector3f = {0.0f, 0.0f, 0.0f};
+    sead::Vector3f mUnkVector3f2 = {0.0f, 0.0f, 0.0f};
+    f32 mUnusedFloat = .0f;
+    bool mIsCapAttack = false;
+    bool mPad_139[7];
 };

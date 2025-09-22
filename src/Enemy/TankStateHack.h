@@ -27,8 +27,9 @@ class EnemyStateHackStart;
 
 class TankStateHack : public al::ActorStateBase {
 public:
-    TankStateHack(Tank* parent, const al::ActorInitInfo& initinfo, f32* float1, f32* float2,
-                  sead::Vector3f* vec3, sead::Quatf* quat, f32* float3);
+    TankStateHack(Tank* tank, const al::ActorInitInfo& info, f32* mCannonRotator,
+                  f32* mCannonScalor, sead::Vector3f* mFrontDir, sead::Quatf* mPose,
+                  f32* mYRotator);
     void appear();
     void kill();
     void control();
@@ -61,17 +62,18 @@ public:
     void exeLand();
 
 private:
+    friend class Tank;
     bool mIsDead = false;
     al::LiveActor* mLiveActor = nullptr;
     Tank* mTankActor = nullptr;
     AimingCursor* mAimingCursor = nullptr;
     IUsePlayerHack* mIUsePlayerHack = nullptr;
-    const CapTargetInfo* mCapTargetInfo = nullptr;
+    CapTargetInfo* mCapTargetInfo = nullptr;
     EnemyStateHackStart* mHackStart = nullptr;
     HackerJudgeNormalFall* mHackerJudgeFall = nullptr;
-    f32* mFloat1 = nullptr;
-    f32* mFloat2 = nullptr;
-    sead::Vector3f* mVec3 = nullptr;
+    f32* mCannonRotator = nullptr;
+    f32* mCannonScalor = nullptr;
+    sead::Vector3f* mFrontDir = nullptr;
     u64 mInt1 = 0;
     u32 mInt2 = 0;
     u64 mInt3 = 0;
@@ -89,12 +91,11 @@ private:
     bool mIsStanding = false;
     sead::Vector3f mSomeVec = {57.5, -25.0, 0.8};
     bool mIsUnkown = false;
-
+    void* filler[6];
     sead::Quatf* mPose = nullptr;
-    f32* mFloat3 = nullptr;
+    f32* mYRotator = nullptr;
     al::IntervalTrigger* mIntervalTrigger = nullptr;
-
-    f32 mFloat4 = 0.0;
+    f32 mAlphaMask = 0.0;
     bool mIsFalling = false;
-    u32 mNotfloat5 = 0;
+    u32 mNotf325 = 0;
 };

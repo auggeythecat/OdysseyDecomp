@@ -14,10 +14,13 @@
 #include "Library/LiveActor/ActorModelFunction.h"
 #include "Library/LiveActor/ActorMovementFunction.h"
 #include "Library/LiveActor/ActorPoseUtil.h"
+#include "Library/LiveActor/ActorSensorUtil.h"
+#include "Library/LiveActor/LiveActor.h"
 #include "Library/LiveActor/LiveActorGroup.h"
 #include "Library/Math/MathUtil.h"
 #include "Library/Movement/EnemyStateBlowDown.h"
 #include "Library/Nature/NatureUtil.h"
+#include "Library/Nerve/Nerve.h"
 #include "Library/Nerve/NerveSetupUtil.h"
 #include "Library/Nerve/NerveUtil.h"
 #include "Library/Placement/PlacementFunction.h"
@@ -34,6 +37,7 @@
 #include "System/GameDataHolder.h"
 #include "System/GameDataHolderAccessor.h"
 #include "Util/PlayerUtil.h"
+#include "Util/SensorMsgFunction.h"
 
 namespace {
 NERVE_IMPL(Tank, Wait)
@@ -198,7 +202,7 @@ void Tank::init(const al::ActorInitInfo& info) {
         }
     }
 
-    if (mIsCapInit) {
+    if (mIsCaptured) {
         if (al::listenStageSwitchOnOff(this, "EnableShoot", TankFunctor(this, &Tank::enableShoot),
                                        TankFunctor(this, &Tank::disableShoot))) {
             mIsShoot = false;
@@ -251,32 +255,36 @@ void Tank::initAfterPlacement() {
 }
 
 void Tank::appear() {
-    al::Nerve* nerve;
+    bool shouldMove;
     if (al::isAlive(this) && al::isNerve(this, &NrvTank.Reset))
         return;
+
     al::onCollide(this);
     al::startAction(this, "Wait");
     al::LiveActor::appear();
+
     if (al::isExistRail(this)) {
         sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
         al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
-
-        if ((nearestRail - al::getTrans(this)).length() <= 150.0f)
-            nerve = &NrvTank.Move;
-        else
-            nerve = &NrvTank.Wait;
+        f32 length = (nearestRail - al::getTrans(this)).length();
+        shouldMove = !(length > 150.0f);
+        if (shouldMove) {
+            al::setNerve(this, &NrvTank.Move);
+            return;
+        }
     }
-    al::setNerve(this, nerve);
-    return;
+    al::setNerve(this, &NrvTank.Wait);
 }
 
 bool Tank::isExistAndNearRail() {
+    bool shouldMove = false;
     if (al::isExistRail(this)) {
         sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
         al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
-        return (nearestRail - al::getTrans(this)).length() <= 150.0f;
+        f32 length = (nearestRail - al::getTrans(this)).length();
+        shouldMove = !(length > 150.0f);
     }
-    return false;
+    return shouldMove;
 }
 
 void Tank::kill() {
@@ -285,25 +293,106 @@ void Tank::kill() {
 }
 
 void Tank::control() {
+    bool shouldMove;
+    al::Nerve* nerve;
     if (mMtxConnector != nullptr) {
         if (al::isExistRail(this)) {
             sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
             al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
-            if (!((nearestRail - al::getTrans(this)).length() <= 150.0f))
-                al::connectPoseQT(this, mMtxConnector);
+            f32 length = (nearestRail - al::getTrans(this)).length();
+            shouldMove = (length > 150.0f);
+        }
+        if (shouldMove)
+            al::connectPoseQT(this, mMtxConnector);
+    }
+
+    if (!al::isNerve(this, &NrvTank.Hack) && !al::isNerve(this, &NrvTank.Swoon)) {
+        sead::Quatf Pose = al::getQuat(this);
+        // mPosez = mPose.z;
+        // mPosey = mPose.y;
+    }
+
+    if (!al::isNerve(this, &NrvTank.Hack))
+        al::tryStartVisAnimIfNotPlaying(this, "HackOffCapOff");
+
+    if ((((!al::isNerve(this, &NrvTank.Reset)) &&
+          !al::isNerve(this, &NrvTank.ReviveInsideScreen)) &&
+         !al::isNerve(this, &NrvTank.ReviveInsideScreenNoAutoRevive)) &&
+        ((!al::isNerve(this, &NrvTank.BlowDown) && (!al::isNerve(this, &NrvTank.PressDown))))) {
+        al::isInDeathArea(this /*al::getTrans(this)*/);
+
+        if ((((al::isInDeathArea(this) || ((al::isCollidedFloorCode(this, "DamageFire") ||
+                                            al::isCollidedFloorCode(this, "Needle")))) ||
+              al::isCollidedFloorCode(this, "Poison")) ||
+             al::isInWater(this)) &&
+            ((!al::isNerve(this, &NrvTank.Hack) || mTankStateHack->forceEndIfHack()))) {
+            al::setVelocityZero((LiveActor*)this);
+            al::startHitReaction((LiveActor*)this, "死亡");
+            mCannonScalor = 1.0;
+            if (mIsNerveReset == false) {
+                if (mIsCaptured == false)
+                    nerve = &NrvTank.Reset;
+                else
+                    nerve = &NrvTank.ReviveInsideScreenNoAutoRevive;
+                al::setNerve(this, nerve);
+            } else {
+                al::setNerve(this, &NrvTank.ReviveInsideScreenNoAutoRevive);
+                kill();
+            }
         }
     }
-    if (!al::isNerve(this, &NrvTank.Hack)) {
-        al::tryStartVisAnimIfNotPlaying(this, "HackOffCapOff");
-    }
-    
 }
 
-void Tank::die() {}
+void Tank::die() {
+    al::Nerve* nerve;
+    al::setVelocityZero(this);
+    al::startHitReaction(this, "死亡");
+    mCannonScalor = 1.0;
+    if (mIsNerveReset) {
+        al::setNerve(this, &NrvTank.Reset);
+        kill();
+        return;
+    }
 
-void Tank::calcAnim() {}
+    if (!mIsCaptured)
+        al::setNerve(this, &NrvTank.Reset);
+    else
+        al::setNerve(this, &NrvTank.ReviveInsideScreenNoAutoRevive);
+}
 
-void Tank::attackSensor(al::HitSensor* self, al::HitSensor* other) {}
+void Tank::calcAnim() {
+    al::LiveActor::calcAnim();
+    if (al::isNerve(this, &NrvTank.Hack))
+        al::setModelAlphaMask(this, mTankStateHack->mAlphaMask);
+}
+
+void Tank::attackSensor(al::HitSensor* self, al::HitSensor* other) {
+    if (al::isNerve(this, &NrvTank.Hack))
+        mTankStateHack->attackSensor(self, other);
+
+    if ((((!al::isNerve(this, &NrvTank.Hack) && !al::isNerve(this, &NrvTank.Reset)) &&
+          !al::isNerve(this, &NrvTank.ReviveInsideScreen)) &&
+         ((!al::isNerve(this, &NrvTank.ReviveInsideScreenNoAutoRevive) &&
+           !al::isNerve(this, &NrvTank.BlowDown)))) &&
+        !al::isNerve(this, &NrvTank.PressDown)) {
+        if (al::isSensorEnemyBody(self)) {
+            if (!al::isSensorPlayer(other)) {
+                al::sendMsgPush(other, self);
+                return;
+            }
+        } else if (al::isSensorEnemyAttack(self) && !rs::sendMsgTankKickEnemy(other, self)) {
+            if (al::isNerve(this, &NrvTank.Swoon) ||
+                (al::isNerve(this, &NrvTank.Appear) || !al::sendMsgEnemyAttack(other, self))) {
+                rs::sendMsgPushToPlayer(other, self);
+                return;
+            }
+            if (!al::isNerve(this, &NrvTank.AttackSign) && !al::isNerve(this, &NrvTank.Shoot)) {
+                al::setNerve(this, &NrvTank.AttackHit);
+                return;
+            }
+        }
+    }
+}
 
 bool Tank::receiveMsg(const al::SensorMsg* message, al::HitSensor* self, al::HitSensor* other) {
     return false;
@@ -317,15 +406,26 @@ TankBullet Tank::shootByPlayer(const sead::Vector3f* vector, f32 f321, u32 int1)
     return nullptr;
 }
 
-void Tank::isSwoon() {
+void Tank::isSwoon() const {
     al::isNerve(this, &NrvTank.Swoon);
 }
 
-void Tank::appearCtrl() {}
+void Tank::appearCtrl() {
+    al::onCollide(this);
+    al::startAction(this, "Wait");
+    al::LiveActor::appear();
+    al::hideModel(this);
+    al::setNerve(this, &NrvTank.ReviveInsideScreenNoAutoRevive);
+}
 
-void Tank::preInitHandleByMofumofu() {}
+void Tank::preInitHandleByMofumofu() {
+    mIsCaptured = true;
+}
 
-void Tank::appearAndDemoWait() {}
+void Tank::appearAndDemoWait() {
+    appear();
+    al::setNerve(this, &NrvTank.DemoWait);
+}
 
 void Tank::endDemoWait() {
     al::setNerve(this, &NrvTank.Wait);
@@ -335,27 +435,51 @@ void Tank::startShootByMofumofu() {
     al::setNerve(this, &NrvTank.AttackSign);
 }
 
-void Tank::startBlowDownByMofumofu(al::HitSensor*) {}
-
-void Tank::startRevive() {
-    // mEnemyStateReviveInsideScreen->startRevive();
+void Tank::startBlowDownByMofumofu(al::HitSensor* self) {
+    if ((((!al::isNerve(this, &NrvTank.Hack)) && !al::isNerve(this, &NrvTank.Reset)) &&
+         !al::isNerve(this, &NrvTank.ReviveInsideScreen)) &&
+        (((!al::isNerve(this, &NrvTank.ReviveInsideScreenNoAutoRevive) &&
+           !al::isNerve(this, &NrvTank.BlowDown))) &&
+         !al::isNerve(this, &NrvTank.PressDown))) {
+        al::invalidateClipping(this);
+        mBulletGroup->killAll();
+        al::setAppearItemFactor(this, "間接攻撃", self);
+        sead::Vector3f back = {0.0, 0.0, 0.0};
+        al::calcBackDir(&back, this);
+        mEnemyStateBlowDown->start(back);
+        al::setNerve(this, &NrvTank.BlowDown);
+    }
 }
 
-void Tank::startRevivePrepare() {}
+void Tank::startRevive() {
+    mEnemyStateReviveInsideScreen1->startRevive();
+}
 
-void Tank::forceEndHackByMofumofu() {}
+void Tank::startRevivePrepare() {
+    al::setNerve(this, &NrvTank.ReviveInsideScreenNoAutoRevive);
+}
+
+void Tank::forceEndHackByMofumofu() {
+    mTankStateHack->forceEndIfHack();
+    mBulletGroup->makeActorDeadAll();
+    makeActorDead();
+}
 
 void Tank::setSubjectiveCameraLimitDegree(f32 tmpname, f32 tmpname2) {}
 
 void Tank::setSubjectiveCameraAimFollowRateV(f32 tmpname) {}
 
-void Tank::isHacking() {}
+void Tank::isHacking() const {
+    al::isNerve(this, &NrvTank.Hack);
+}
 
-bool Tank::isRevivePrepare() {
+bool Tank::isRevivePrepare() const {
+    if (al::isNerve(this, &NrvTank.ReviveInsideScreenNoAutoRevive))
+        return mEnemyStateReviveInsideScreen1->isDisappear();
     return false;
 }
 
-bool Tank::isEnableStartAttack() {
+bool Tank::isEnableStartAttack() const {
     if (!al::isNerve(this, &NrvTank.Wait))
         return false;
     else
@@ -390,11 +514,36 @@ void Tank::exeBlowDown() {
     }
 }
 
-void Tank::exeReviveInsideScreenNoAutoRevive() {}
+void Tank::exeReviveInsideScreenNoAutoRevive() {
+    if (al::updateNerveStateAndNextNerve(this, &NrvTank.Wait)) {
+        al::validateClipping(this);
+        mTankStateHack->reset();
+        if (!mIsCaptured) {
+            mEnemyStateDamageCap->resetCap();
+            al::showModelIfHide(this);
+        }
+    }
+}
 
 void Tank::exeReviveInsideScreen() {}
 
-void Tank::exeDamageCap() {}
+void Tank::exeDamageCap() {
+    if (al::updateNerveState(this)) {
+        bool shouldMove = false;
+        if (al::isExistRail(this)) {
+            sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
+            al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
+            f32 length = (nearestRail - al::getTrans(this)).length();
+            shouldMove = !(length > 150.0f);
+        }
+        if (shouldMove) {
+            al::setSyncRailToNearestPos(this);
+            al::setNerve(this, &NrvTank.Move);
+        } else {
+            al::setNerve(this, &NrvTank.Wait);
+        }
+    }
+}
 
 void Tank::exePressDown() {}
 
@@ -405,26 +554,19 @@ void Tank::exeAttackSign() {}
 void Tank::exeShoot() {}
 
 void Tank::exeAttackHit() {
-    sead::Vector3f front = {0.0, 0.0, 0.0};
-
     if (al::isFirstStep(this))
         al::startAction(this, "AttackHit");
-
-    // sead::Vector3f playerPos = rs::getPlayerPos(this);
     al::turnToTarget(this, rs::getPlayerPos(this), 8.0);
+    sead::Vector3f front = {0.0, 0.0, 0.0};
     al::calcFrontDir(&front, this);
-    // f32 planeAngle = al::calcAngleOnPlaneDegree(mFrontDir, front, sead::Vector3f::ey);
-    // mJointXRotate = planeAngle;
+    mHipRotator = al::calcAngleOnPlaneDegree(mFrontDir, front, sead::Vector3f::ey);
     if (!al::isActionEnd(this))
         return;
+
     if (al::isExistRail(this)) {
         sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
         al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
-        sead::Vector3f pose = al::getTrans(this);
-
-        if (sead::Mathf::sqrt((nearestRail.x - pose.x) * (nearestRail.x - pose.x) +
-                              (nearestRail.y - pose.y) * (nearestRail.y - pose.y) +
-                              (nearestRail.z - pose.z) * (nearestRail.z - pose.z)) <= 150) {
+        if (!((nearestRail - al::getTrans(this)).length() <= 150.0f)) {
             al::setNerve(this, &NrvTank.Move);
             return;
         }
@@ -432,7 +574,24 @@ void Tank::exeAttackHit() {
     al::setNerve(this, &NrvTank.Wait);
 }
 
-void Tank::exePressReaction() {}
+void Tank::exePressReaction() {
+    if (al::isFirstStep(this))
+        al::startAction(this, "Reaction");
+    if (al::isActionEnd(this)) {
+        bool shouldMove = false;
+
+        if (al::isExistRail(this)) {
+            sead::Vector3f nearestRail = {0.0, 0.0, 0.0};
+            al::calcNearestRailPos(&nearestRail, this, al::getTrans(this));
+            f32 length = (nearestRail - al::getTrans(this)).length();
+            shouldMove = !(length > 150.0f);
+        }
+        if (shouldMove)
+            al::setNerve(this, &NrvTank.Move);
+        else
+            al::setNerve(this, &NrvTank.Wait);
+    }
+}
 
 void Tank::exeDemoWait() {
     if (al::isFirstStep(this))
