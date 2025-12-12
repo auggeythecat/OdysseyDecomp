@@ -19,6 +19,7 @@ public:
     void exeDelay();
     void exeAppearSign();
 
+    inline void changehidden(bool status) { mIsHidden = status; };
 private:
     sead::Quatf mReviveQuat = sead::Quatf::unit;
     sead::Vector3f mRevivePos = sead::Vector3f::zero;

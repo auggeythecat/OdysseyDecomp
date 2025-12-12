@@ -40817,15 +40817,15 @@ Enemy/Tank.o:
   - offset: 0x186458
     size: 256
     label: _ZN4TankC2EPKc
-    status: Wip
+    status: Matching
   - offset: 0x186558
     size: 268
     label: _ZN4TankC1EPKc
-    status: Wip
+    status: Matching
   - offset: 0x186664
     size: 1936
     label: _ZN4Tank4initERKN2al13ActorInitInfoE
-    status: Wip
+    status: NonMatchingMajor
   - offset: 0x186df4
     size: 12
     label: _ZN4Tank11enableShootEv
@@ -40855,7 +40855,7 @@ Enemy/Tank.o:
   - offset: 0x187054
     size: 624
     label: _ZN4Tank7controlEv
-    status: Wip
+    status: Matching
   - offset: 0x1872c4
     size: 148
     label: _ZN4Tank3dieEv
@@ -40871,11 +40871,11 @@ Enemy/Tank.o:
   - offset: 0x18753c
     size: 1816
     label: _ZN4Tank10receiveMsgEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: Wip
+    status: NonMatchingMajor
   - offset: 0x187c54
     size: 96
     label: _ZN4Tank10isMyBulletEPN2al9HitSensorE
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187cb4
     size: 300
     label: _ZN4Tank13shootByPlayerERKN4sead7Vector3IfEEfi
@@ -40895,7 +40895,7 @@ Enemy/Tank.o:
   - offset: 0x187e4c
     size: 52
     label: _ZN4Tank17appearAndDemoWaitEv
-    status: Wip
+    status: Matching
   - offset: 0x187e80
     size: 12
     label: _ZN4Tank11endDemoWaitEv
@@ -40923,11 +40923,11 @@ Enemy/Tank.o:
   - offset: 0x187fd0
     size: 16
     label: _ZN4Tank30setSubjectiveCameraLimitDegreeEff
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187fe0
     size: 12
     label: _ZN4Tank33setSubjectiveCameraAimFollorRateVEf
-    status: NotDecompiled
+    status: Matching
   - offset: 0x187fec
     size: 16
     label: _ZNK4Tank9isHackingEv
@@ -40943,35 +40943,35 @@ Enemy/Tank.o:
   - offset: 0x188084
     size: 320
     label: _ZN4Tank7exeWaitEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x1881c4
     size: 692
     label: _ZN4Tank4turnEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x188478
     size: 292
     label: _ZN4Tank9exeAppearEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18859c
     size: 500
     label: _ZN4Tank7exeMoveEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x188790
     size: 192
     label: _ZN4Tank13exeAttackSignEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x188850
     size: 904
     label: _ZN4Tank8exeShootEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x188bd8
     size: 180
     label: _ZN4Tank13isEnableShootEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x188c8c
     size: 468
     label: _ZN4Tank8exeResetEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x188e60
     size: 92
     label: _ZN4Tank33exeReviveInsideScreenNoAutoReviveEv
@@ -40979,7 +40979,7 @@ Enemy/Tank.o:
   - offset: 0x188ebc
     size: 280
     label: _ZN4Tank21exeReviveInsideScreenEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x188fd4
     size: 248
     label: _ZN4Tank16exePressReactionEv
@@ -40987,11 +40987,11 @@ Enemy/Tank.o:
   - offset: 0x1890cc
     size: 236
     label: _ZN4Tank12exePressDownEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x1891b8
     size: 208
     label: _ZN4Tank11exeBlowDownEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189288
     size: 228
     label: _ZN4Tank12exeDamageCapEv
@@ -40999,15 +40999,15 @@ Enemy/Tank.o:
   - offset: 0x18936c
     size: 308
     label: _ZN4Tank12exeAttackHitEv
-    status: Wip
+    status: Matching
   - offset: 0x1894a0
     size: 408
     label: _ZN4Tank8exeSwoonEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189638
     size: 80
     label: _ZN4Tank7exeHackEv
-    status: Wip
+    status: Matching
   - offset: 0x189688
     size: 60
     label: _ZN4Tank11exeDemoWaitEv
@@ -41015,101 +41015,101 @@ Enemy/Tank.o:
   - offset: 0x1896c4
     size: 112
     label: _ZNK4Tank16countAliveBulletEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189734
     size: 8
     label: _ZNK12_GLOBAL__N_111TankNrvWait7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18973c
     size: 8
     label: _ZNK12_GLOBAL__N_111TankNrvMove7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x189744
     size: 80
     label: _ZNK12_GLOBAL__N_111TankNrvHack7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x189794
     size: 8
     label: _ZNK12_GLOBAL__N_112TankNrvReset7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18979c
     size: 8
     label: _ZNK12_GLOBAL__N_112TankNrvSwoon7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x1897a4
     size: 8
     label: _ZNK12_GLOBAL__N_115TankNrvBlowDown7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x1897ac
     size: 96
     label: _ZNK12_GLOBAL__N_137TankNrvReviveInsideScreenNoAutoRevive7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18980c
     size: 8
     label: _ZNK12_GLOBAL__N_125TankNrvReviveInsideScreen7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x189814
     size: 8
     label: _ZNK12_GLOBAL__N_116TankNrvDamageCap7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18981c
     size: 8
     label: _ZNK12_GLOBAL__N_116TankNrvPressDown7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x189824
     size: 8
     label: _ZNK12_GLOBAL__N_113TankNrvAppear7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18982c
     size: 8
     label: _ZNK12_GLOBAL__N_117TankNrvAttackSign7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x189834
     size: 8
     label: _ZNK12_GLOBAL__N_112TankNrvShoot7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18983c
     size: 8
     label: _ZNK12_GLOBAL__N_116TankNrvAttackHit7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x189844
     size: 8
     label: _ZNK12_GLOBAL__N_120TankNrvPressReaction7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18984c
     size: 64
     label: _ZNK12_GLOBAL__N_115TankNrvDemoWait7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18988c
     size: 28
     label: _ZNK2al10FunctorV0MIP4TankMS1_FvvEEclEv
-    status: NotDecompiled
+    status: Matching
     lazy: true
   - offset: 0x1898a8
     size: 76
     label: _ZNK2al10FunctorV0MIP4TankMS1_FvvEE5cloneEv
-    status: NotDecompiled
+    status: Matching
     lazy: true
   - offset: 0x1898f4
     size: 4
     label: _ZN2al10FunctorV0MIP4TankMS1_FvvEED0Ev
-    status: NotDecompiled
+    status: Matching
     lazy: true
   - offset: 0x1898f8
     size: 164
@@ -41120,82 +41120,82 @@ Enemy/TankBullet.o:
   - offset: 0x18999c
     size: 148
     label: _ZN10TankBulletC2EPKc
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189a30
     size: 160
     label: _ZN10TankBulletC1EPKc
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189ad0
     size: 152
     label: _ZN10TankBullet4initERKN2al13ActorInitInfoE
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189b68
     size: 544
     label: _ZN10TankBullet12attackSensorEPN2al9HitSensorES2_
-    status: NotDecompiled
+    status: Wip
   - offset: 0x189d88
     size: 112
     label: _ZN10TankBullet7explodeEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189df8
     size: 44
     label: _ZN10TankBullet6appearEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189e24
     size: 460
     label: _ZN10TankBullet10receiveMsgEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: NotDecompiled
+    status: Matching
   - offset: 0x189ff0
     size: 248
     label: _ZN10TankBullet5shootERKN4sead7Vector3IfEES4_ibb
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18a0e8
     size: 668
     label: _ZN10TankBullet13shootByPlayerERKN4sead7Vector3IfEES4_S4_S4_fi
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18a384
     size: 64
     label: _ZN10TankBullet8exeStartEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18a3c4
     size: 368
     label: _ZN10TankBullet7exeMoveEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18a534
     size: 12
     label: _ZN10TankBullet9disappearEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18a540
     size: 1024
     label: _ZN10TankBullet13exeMovePlayerEv
-    status: NotDecompiled
+    status: Wip
   - offset: 0x18a940
     size: 256
     label: _ZN10TankBullet10exeExplodeEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18aa40
     size: 4
     label: _ZN10TankBullet11exeYoshiEatEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18aa44
     size: 68
     label: _ZNK12_GLOBAL__N_118TankBulletNrvStart7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18aa88
     size: 4
     label: _ZNK12_GLOBAL__N_121TankBulletNrvYoshiEat7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18aa8c
     size: 8
     label: _ZNK12_GLOBAL__N_120TankBulletNrvExplode7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18aa94
     size: 8
     label: _ZNK12_GLOBAL__N_123TankBulletNrvMovePlayer7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18aa9c
     size: 8
@@ -41207,19 +41207,19 @@ Enemy/TankReviveCtrl.o:
   - offset: 0x18aaa4
     size: 124
     label: _ZN14TankReviveCtrlC2EPKc
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18ab20
     size: 136
     label: _ZN14TankReviveCtrlC1EPKc
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18aba8
     size: 272
     label: _ZN14TankReviveCtrl4initERKN2al13ActorInitInfoE
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18acb8
     size: 412
     label: _ZN14TankReviveCtrl7controlEv
-    status: NotDecompiled
+    status: Matching
 Enemy/TankStateHack.o:
   '.text':
   - offset: 0x18ae54
@@ -41227,23 +41227,23 @@ Enemy/TankStateHack.o:
     label:
     - _ZN13TankStateHackC1EP4TankRKN2al13ActorInitInfoEPfS6_PN4sead7Vector3IfEEPNS7_4QuatIfEES6_
     - _ZN13TankStateHackC2EP4TankRKN2al13ActorInitInfoEPfS6_PN4sead7Vector3IfEEPNS7_4QuatIfEES6_
-    status: Wip
+    status: NonMatchingMajor
   - offset: 0x18b104
     size: 168
     label: _ZN13TankStateHack6appearEv
-    status: Wip
+    status: NonMatchingMajor
   - offset: 0x18b1ac
     size: 240
     label: _ZN13TankStateHack4killEv
-    status: Wip
+    status: NonMatchingMajor
   - offset: 0x18b29c
     size: 116
     label: _ZN13TankStateHack7controlEv
-    status: Wip
+    status: Matching
   - offset: 0x18b310
     size: 68
     label: _ZN13TankStateHack5resetEv
-    status: Wip
+    status: Matching
   - offset: 0x18b354
     size: 16
     label: _ZN13TankStateHack27receiveMsgInitCapTargetInfoEPKN2al9SensorMsgE
@@ -41251,27 +41251,27 @@ Enemy/TankStateHack.o:
   - offset: 0x18b364
     size: 16
     label: _ZN13TankStateHack25receiveMsgNpcScareByEnemyEPKN2al9SensorMsgE
-    status: Wip
+    status: Matching
   - offset: 0x18b374
     size: 124
     label: _ZN13TankStateHack19receiveMsgHackStartEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: Wip
+    status: Matching
   - offset: 0x18b3f0
     size: 224
     label: _ZN13TankStateHack10receiveMsgEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: Wip
+    status: Matching
   - offset: 0x18b4d0
     size: 88
     label: _ZN13TankStateHack17receiveMsgHackEndEPKN2al9SensorMsgEPNS0_9HitSensorES5_
-    status: Wip
+    status: Matching
   - offset: 0x18b528
     size: 316
     label: _ZN13TankStateHack7endHackEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18b664
     size: 192
     label: _ZN13TankStateHack12attackSensorEPN2al9HitSensorES2_
-    status: Wip
+    status: Matching
   - offset: 0x18b724
     size: 1944
     label: _ZN13TankStateHack12exeStartDemoEv
@@ -41279,19 +41279,19 @@ Enemy/TankStateHack.o:
   - offset: 0x18bebc
     size: 296
     label: _ZN13TankStateHack10updatePoseEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18bfe4
     size: 184
     label: _ZN13TankStateHack7exeWaitEv
-    status: Wip
+    status: NonMatchingMajor
   - offset: 0x18c09c
     size: 760
     label: _ZN13TankStateHack14updateVelocityEb
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18c394
     size: 2908
     label: _ZN13TankStateHack12updateCameraEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18cef0
     size: 196
     label: _ZN13TankStateHack27tryChangeNerveIfTrigerShootEv
@@ -41299,74 +41299,74 @@ Enemy/TankStateHack.o:
   - offset: 0x18cfb4
     size: 180
     label: _ZN13TankStateHack7exeMoveEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18d068
     size: 392
     label: _ZN13TankStateHack8exeShootEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18d1f0
     size: 232
     label: _ZN13TankStateHack14exeShootReloadEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18d2d8
     size: 172
     label: _ZN13TankStateHack7exeFallEv
-    status: Wip
+    status: NonMatchingMajor
   - offset: 0x18d384
     size: 120
     label: _ZN13TankStateHack7exeLandEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18d3fc
     size: 76
     label: _ZN13TankStateHack14forceEndIfHackEv
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18d448
     size: 56
     label: _ZNK13TankStateHack22calcAimCursorLayoutPosEPN4sead7Vector2IfEE
-    status: NotDecompiled
+    status: Matching
   - offset: 0x18d480
     size: 144
     label: _ZN13TankStateHack5shootEv
-    status: NotDecompiled
+    status: NonMatchingMajor
   - offset: 0x18d510
     size: 36
     label: _ZN13TankStateHackD0Ev
-    status: NotDecompiled
+    status: Matching
     lazy: true
   - offset: 0x18d534
     size: 8
     label: _ZNK12_GLOBAL__N_120TankStateHackNrvWait7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18d53c
     size: 8
     label: _ZNK12_GLOBAL__N_125TankStateHackNrvStartDemo7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18d544
     size: 8
     label: _ZNK12_GLOBAL__N_120TankStateHackNrvFall7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18d54c
     size: 8
     label: _ZNK12_GLOBAL__N_120TankStateHackNrvMove7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18d554
     size: 8
     label: _ZNK12_GLOBAL__N_120TankStateHackNrvLand7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: NonMatchingMajor
     guess: true
   - offset: 0x18d55c
     size: 8
     label: _ZNK12_GLOBAL__N_127TankStateHackNrvShootReload7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
   - offset: 0x18d564
     size: 8
     label: _ZNK12_GLOBAL__N_121TankStateHackNrvShoot7executeEPN2al11NerveKeeperE
-    status: NotDecompiled
+    status: Matching
     guess: true
 Enemy/TestBgmBeatSync.o:
   '.text':

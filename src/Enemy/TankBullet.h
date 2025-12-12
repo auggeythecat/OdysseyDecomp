@@ -12,27 +12,30 @@ public:
     TankBullet(const char*);
     void init(const al::ActorInitInfo&) override;
     void attackSensor(al::HitSensor* self, al::HitSensor* other) override;
-    bool explode();
+    void explode();
     void appear() override;
     bool receiveMsg(const al::SensorMsg*, al::HitSensor* self, al::HitSensor* other) override;
     void shoot(const sead::Vector3f&, const sead::Vector3f&, s32, bool, bool);
-    bool shootByPlayer(const sead::Vector3f&, const sead::Vector3f&, const sead::Vector3f&,
+    void shootByPlayer(const sead::Vector3f&, const sead::Vector3f&, const sead::Vector3f&,
                        const sead::Vector3f&, f32, s32);
-    bool exeStart();
-    bool exeMove();
+    void exeStart();
+    void exeMove();
     void disappear();
-    bool exeMovePlayer();
+    void exeMovePlayer();
     void exeExplode();
     void exeYoshiEat();
 
 private:
-    s32 mUnusedInt = -1;
+    s32 mSensorRadius = -1;
     bool mIsShotByPlayer = false;
-    bool mPad_10D[3];
     sead::Vector3f mStartingPos = {0.0f, 0.0f, 0.0f};
-    sead::Vector3f mUnkVector3f = {0.0f, 0.0f, 0.0f};
-    sead::Vector3f mUnkVector3f2 = {0.0f, 0.0f, 0.0f};
-    f32 mUnusedFloat = .0f;
-    bool mIsCapAttack = false;
-    bool mPad_139[7];
+    sead::Vector3f mVec2 = {
+        0.0f, 0.0f, 0.0f};  // Waiting for TankStateHack to be decomplied so it can get a name.
+    sead::Vector3f mVec3 = {
+        0.0f, 0.0f, 0.0f};  // Waiting for TankStateHack to be decomplied so it can get a name.
+    f32 mSpeed = 0.0f;
+    bool mIsCapAttack;
+    // bool mIsInvisible;
 };
+
+static_assert(sizeof(TankBullet) == 0x140);

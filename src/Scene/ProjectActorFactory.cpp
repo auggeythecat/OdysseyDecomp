@@ -1,5 +1,7 @@
 #include "Scene/ProjectActorFactory.h"
 
+#include "Enemy/Tank.h"
+#include "Enemy/TankReviveCtrl.h"
 #include "Library/Fluid/FlowMapParts.h"
 #include "Library/LiveActor/CreateActorFunction.h"
 #include "Library/MapObj/BackHideParts.h"
@@ -566,8 +568,8 @@ const al::NameToCreator<al::ActorCreatorFunction> sProjectActorFactoryEntries[] 
     {"TalkNpcSnowManLeader", nullptr},
     {"TalkNpcSnowManRacer", nullptr},
     {"TalkPoint", nullptr},
-    {"Tank", nullptr},
-    {"TankReviveCtrl", nullptr},
+    {"Tank", al::createActorFunction<Tank>},
+    {"TankReviveCtrl", al::createActorFunction<TankReviveCtrl>},
     {"TaxiStop", nullptr},
     {"TextureReplaceScreen", nullptr},
     {"ThunderRenderRequester", nullptr},

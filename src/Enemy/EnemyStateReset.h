@@ -19,6 +19,7 @@ public:
 
     void exeWait();
 
+    inline void setValidDistance(f32 newdistance) { mValidDistance = newdistance; };
 private:
     sead::Vector3f mPos = sead::Vector3f::zero;
     sead::Vector3f mRot = sead::Vector3f::zero;
